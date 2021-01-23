@@ -1,0 +1,13 @@
+FROM node:15.6.0
+
+WORKDIR /forge-dev
+
+COPY package.json package-lock.json tsconfig.json tsconfig.client.json tsconfig.server.json webpack.client.config.js webpack.server.config.js /forge-dev/
+RUN npm i
+
+COPY .env /forge-dev/.env
+COPY src /forge-dev/src
+COPY public/inde.html /forge-dev/public/index.html
+RUN npm run build
+
+CMD ["npm", "run", "start:sever"]
