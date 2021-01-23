@@ -108,3 +108,81 @@ export type ProjectData = {
     };
   };
 };
+
+export type dataType =
+  | "folders"
+  | "folders:autodesk.bim360:Folder"
+  | "items:autodesk.bim360:File"
+  | "items:autodesk.bim360:Document"
+  | "items:autodesk.bim360:TitleBlock"
+  | "items:autodesk.bim360:ReviewDocument";
+
+export type TopFolderData = {
+  type: "folders";
+  id: string;
+  attributes: {
+    name: string;
+    displayName: string;
+    createTime: Date;
+    createUserId: string;
+    createUserName: string;
+    lastModifiedTime: Date;
+    lastModifiedUserId: string;
+    lastModifiedUserName: string;
+    objectCount: number;
+    hidden: boolean;
+    extension: {
+      type: "folders:autodesk.bim360:Folder";
+      version: "1.0";
+      schema: {
+        href: "https://developer.api.autodesk.com/schema/v1/versions/folders%3Aautodesk.bim360%3AFolder-1.0";
+      };
+      data: {
+        allowedTypes: dataType[];
+        visibleTypes: dataType[];
+      };
+    };
+  };
+  links: {
+    self: {
+      href: string;
+    };
+  };
+  relationships: {
+    parent: {
+      links: {
+        related: {
+          href: string;
+        };
+      };
+      data: {
+        type: "folders";
+        id: string;
+      };
+    };
+    refs: {
+      links: {
+        self: {
+          href: string;
+        };
+        related: {
+          href: string;
+        };
+      };
+    };
+    links: {
+      links: {
+        self: {
+          href: string;
+        };
+      };
+    };
+    contents: {
+      links: {
+        related: {
+          href: string;
+        };
+      };
+    };
+  };
+};

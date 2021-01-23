@@ -50,7 +50,7 @@
     "lint": "eslint . --ext .tsx --ext .ts",
     "fmt": "npm run lint -- --fix",
     "start:server": "env-cmd -f .env node ./dist/app.js",
-    "start:server:watch": "env-cmd -f .env nodemon -w ./dist/app.js ./dist/app.js",
+    "start:server:watch": "env-cmd -f .env nodemon --watch ./dist/app.js ./dist/app.js",
     "dev": "npm-run-all -p build:client:watch build:server:watch start:server:watch"
   }
 }

@@ -277,6 +277,99 @@ export type ProjectData = {
   updated_at: Date;
 };
 
+export type pushpinAttibutesType = {
+  type: "TwoDVectorPushpin";
+  location: {
+    x: number;
+    y: number;
+    z: number;
+  };
+  object_id: null;
+  viewer_state: {
+    seedURN: string;
+    viewport: {
+      up: [number, number, number];
+      eye: [string, string, string]; // number
+      name: string;
+      target: [string, string, string]; // number
+      pivotPoint: [string, string, string]; // number
+      projection: "orthographic";
+      aspectRatio: number;
+      worldUpVector: [number, number, number];
+      isOrthographic: boolean;
+      distanceToOrbit: number;
+      orthographicHeight: number;
+    };
+    cutplanes: string[]; // unknown
+    floorGuid: null;
+    objectSet: [{ id: string[]; hidden: string[]; idType: "lmv"; isolated: string[]; explodeScale: number }];
+    globalOffset: {
+      x: number;
+      y: number;
+      z: number;
+    };
+    renderOptions: {
+      toneMap: {
+        method: number;
+        exposure: number;
+        lightMultiplier: number;
+      };
+      appearance: {
+        ghostHidden: boolean;
+        antiAliasing: boolean;
+        displayLines: boolean;
+        ambientShadow: boolean;
+        displayPoints: boolean;
+        swapBlackAndWhite: boolean;
+        progressiveDisplay: boolean;
+      };
+      environment: "Boardwalk";
+      ambientOcclusion: {
+        radius: number;
+        enabled: boolean;
+        intensity: number;
+      };
+    };
+    attributesVersion: 2;
+  };
+  created_at: Date;
+  created_by: string;
+  created_doc_version: null;
+  external_id: string;
+  attributes_version: 1;
+};
+
+export type statusType = "work_completed" | "ready_to_inspect" | "not_approved" | "in_dispute" | "closed" | "void" | "answered";
+
+export type attributeType =
+  | "assigned_to"
+  | "assigned_to_type"
+  | "description"
+  | "due_date"
+  | "location_description"
+  | "trades"
+  | "owner"
+  | "issue_type"
+  | "issue_type_id"
+  | "root_cause"
+  | "root_cause_id"
+  | "title"
+  | "status"
+  | "sheet_metadata"
+  | "lbs_location"
+  | "answer"
+  | "pushpin_attributes"
+  | "snapshot_urn"
+  | "close_version"
+  | "comments_attributes"
+  | "attachments_attributes"
+  | "markup_metadata"
+  | "updated_at"
+  | "tags"
+  | "collection_urn"
+  | "custom_attributes"
+  | "ng_issue_subtype_id";
+
 export type IssueData = {
   id: string;
   type: "quality_issues";
@@ -302,26 +395,26 @@ export type IssueData = {
     due_date: Date;
     identifier: number;
     status: issueStatus;
-    assigned_to: string;
-    assigned_to_type: assignedToType;
+    assigned_to: string | null;
+    assigned_to_type: assignedToType | null;
     answer: string | null;
     answered_at: Date | null;
     answered_by: string | null;
-    pushpin_attributes: null;
+    pushpin_attributes: pushpinAttibutesType | null;
     owner: string;
-    issue_type_id: string;
-    issue_type: string;
+    issue_type_id: string | null;
+    issue_type: "4" | null;
     issue_sub_type: null;
-    root_cause_id: string;
-    root_cause: "COORDINATION";
+    root_cause_id: string | null;
+    root_cause: "COORDINATION" | "DESIGN_CHANGE" | null;
     quality_urns: null;
-    permitted_statuses: string[];
-    permitted_attributes: string[];
-    comment_count: 0;
-    attachment_count: 0;
+    permitted_statuses: statusType[];
+    permitted_attributes: attributeType[];
+    comment_count: number;
+    attachment_count: number;
     permitted_actions: ("add_comment" | "add_attachment")[];
-    sheet_metadata: null;
-    lbs_location: string;
+    sheet_metadata: { is3D: boolean; sheetGuid: string; sheetName: string } | null;
+    lbs_location: string | null;
     ng_issue_subtype_id: string;
     ng_issue_type_id: string;
     custom_attributes: unknown[];

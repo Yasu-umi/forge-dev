@@ -1,9 +1,10 @@
 import fetchPonyfill from "fetch-ponyfill";
+import { assertType } from "typescript-is";
 import * as types from "../types";
 
 export type Response = {
   items: types.BucketData[];
-  next: string;
+  next?: string;
 };
 
 export const url = "https://developer.api.autodesk.com/oss/v2/buckets";
@@ -18,6 +19,6 @@ export const fetch = async (accessToken: string): Promise<types.BucketData[]> =>
     },
   });
   const body: Response = await res.json();
-  console.log(body);
+  assertType<types.BucketData[]>(body.items);
   return body.items;
 };

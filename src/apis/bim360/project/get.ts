@@ -1,4 +1,5 @@
 import fetchPonyfill from "fetch-ponyfill";
+import { assertType } from "typescript-is";
 import * as types from "../types";
 import * as utils from "../utils";
 
@@ -7,7 +8,7 @@ export type Response = types.ProjectData;
 export const url = ({ accountID, projectID }: { accountID: string; projectID: string }) =>
   `https://developer.api.autodesk.com/hq/v1/accounts/${accountID}/projects/${projectID}`;
 
-export const fetch = async (accessToken: string, { accountID, projectID }: { accountID: string; projectID: string }): Promise<Response> => {
+export const fetch = async (accessToken: string, { accountID, projectID }: { accountID: string; projectID: string }): Promise<types.ProjectData> => {
   const { fetch } = fetchPonyfill();
   const res = await fetch(url({ accountID, projectID }), {
     method: "GET",
@@ -17,5 +18,6 @@ export const fetch = async (accessToken: string, { accountID, projectID }: { acc
     },
   });
   const body: Response = await res.json();
+  assertType<types.ProjectData>(body);
   return utils.parseProjectData(body);
 };
