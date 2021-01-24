@@ -1,4 +1,4 @@
-FROM node:15.6.0
+FROM public.ecr.aws/bitnami/node:15.6.0
 
 WORKDIR /forge-dev
 
