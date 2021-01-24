@@ -1,7 +1,7 @@
 import fetchPonyfill from "fetch-ponyfill";
 import { assertType } from "typescript-is";
-import * as types from "../types";
-import * as utils from "../utils";
+import * as types from "../../types";
+import * as utils from "../../utils";
 
 export type Response = types.ProjectData[];
 

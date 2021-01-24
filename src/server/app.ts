@@ -111,6 +111,32 @@ app.get(
 );
 
 app.get(
+  urls.api.dataManagement.hub.get({ hubID: ":hubID" }),
+  tryWrapper(async (req, res) => {
+    const hubID = req.params["hubID"];
+    if (!hubID) throw new Error("NotFoundHubID");
+    const accessToken = await accessTokenPool.get(req.sessionID);
+    if (!accessToken) throw new Error("NotFoundAccessToken");
+    const hub = await apis.dataManagement.hub.get.fetch(accessToken.access_token, { hubID });
+    return res.send({ data: hub });
+  }),
+);
+
+app.get(
+  urls.api.dataManagement.hub.project.get({ hubID: ":hubID", projectID: ":projectID" }),
+  tryWrapper(async (req, res) => {
+    const hubID = req.params["hubID"];
+    if (!hubID) throw new Error("NotFoundHubID");
+    const projectID = req.params["hubID"];
+    if (!projectID) throw new Error("NotFoundHubID");
+    const accessToken = await accessTokenPool.get(req.sessionID);
+    if (!accessToken) throw new Error("NotFoundAccessToken");
+    const projects = await apis.dataManagement.hub.projects.get.fetch(accessToken.access_token, { hubID });
+    return res.send({ data: projects });
+  }),
+);
+
+app.get(
   urls.api.dataManagement.hub.projects.get({ hubID: ":hubID" }),
   tryWrapper(async (req, res) => {
     const hubID = req.params["hubID"];
@@ -123,6 +149,62 @@ app.get(
 );
 
 app.get(
+  urls.api.dataManagement.hub.project.get({ hubID: ":hubID", projectID: ":projectID" }),
+  tryWrapper(async (req, res) => {
+    const hubID = req.params["hubID"];
+    if (!hubID) throw new Error("NotFoundHubID");
+    const projectID = req.params["projectID"];
+    if (!projectID) throw new Error("NotFoundProjectID");
+    const accessToken = await accessTokenPool.get(req.sessionID);
+    if (!accessToken) throw new Error("NotFoundAccessToken");
+    const project = await apis.dataManagement.hub.project.get.fetch(accessToken.access_token, { hubID, projectID });
+    return res.send({ data: project });
+  }),
+);
+
+app.get(
+  urls.api.dataManagement.hub.project.topFolders.get({ hubID: ":hubID", projectID: ":projectID" }),
+  tryWrapper(async (req, res) => {
+    const hubID = req.params["hubID"];
+    if (!hubID) throw new Error("NotFoundHubID");
+    const projectID = req.params["projectID"];
+    if (!projectID) throw new Error("NotFoundProjectID");
+    const accessToken = await accessTokenPool.get(req.sessionID);
+    if (!accessToken) throw new Error("NotFoundAccessToken");
+    const topFolders = await apis.dataManagement.hub.project.topFolders.get.fetch(accessToken.access_token, { hubID, projectID });
+    return res.send({ data: topFolders });
+  }),
+);
+
+app.get(
+  urls.api.dataManagement.project.folder.get({ projectID: ":projectID", folderID: ":folderID" }),
+  tryWrapper(async (req, res) => {
+    const projectID = req.params["projectID"];
+    if (!projectID) throw new Error("NotFoundProjectID");
+    const folderID = req.params["folderID"];
+    if (!folderID) throw new Error("NotFoundFolderID");
+    const accessToken = await accessTokenPool.get(req.sessionID);
+    if (!accessToken) throw new Error("NotFoundAccessToken");
+    const folder = await apis.dataManagement.project.folder.get.fetch(accessToken.access_token, { projectID, folderID });
+    return res.send({ data: folder });
+  }),
+);
+
+app.get(
+  urls.api.dataManagement.project.folder.contents.get({ projectID: ":projectID", folderID: ":folderID" }),
+  tryWrapper(async (req, res) => {
+    const projectID = req.params["projectID"];
+    if (!projectID) throw new Error("NotFoundProjectID");
+    const folderID = req.params["folderID"];
+    if (!folderID) throw new Error("NotFoundFolderID");
+    const accessToken = await accessTokenPool.get(req.sessionID);
+    if (!accessToken) throw new Error("NotFoundAccessToken");
+    const contents = await apis.dataManagement.project.folder.contents.get.fetch(accessToken.access_token, { projectID, folderID });
+    return res.send({ data: contents });
+  }),
+);
+
+app.get(
   urls.api.bim360.issues.get({ issueContainerID: ":issueContainerID" }),
   tryWrapper(async (req, res) => {
     const issueContainerID = req.params["issueContainerID"];
@@ -131,6 +213,18 @@ app.get(
     if (!accessToken) throw new Error("NotFoundAccessToken");
     const issues = await apis.bim360.issues.get.fetch(accessToken.access_token, { issueContainerID });
     return res.send({ data: issues });
+  }),
+);
+
+app.get(
+  urls.api.bim360.account.projects.get({ accountID: ":accountID" }),
+  tryWrapper(async (req, res) => {
+    const accountID = req.params["accountID"];
+    if (!accountID) throw new Error("NotFoundAccountID");
+    const accessToken = await accessTokenPool.get(req.sessionID);
+    if (!accessToken) throw new Error("NotFoundAccessToken");
+    const project = await apis.bim360.account.projects.get.fetch(accessToken.access_token, { accountID });
+    return res.send({ data: project });
   }),
 );
 

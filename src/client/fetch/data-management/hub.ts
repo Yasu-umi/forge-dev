@@ -1,1 +1,1 @@
-export * as projects from "./hub/projects";
+export * from "./_hub";
