@@ -1,18 +1,18 @@
 import React, { useCallback } from "react";
 import { Selector } from "./selector";
 
-type AttributesName = { id: string; attributes: { name: string } };
+type AttributesDisplayName = { id: string; attributes: { displayName: string } };
 
-export const AttributesNameSelector = ({
+export const AttributesDisplayNameSelector = ({
   objects,
   objectID,
   onChangeObjectID,
 }: {
-  objects: AttributesName[];
+  objects: AttributesDisplayName[];
   objectID: string | undefined;
   onChangeObjectID: (id: string) => void;
 }) => {
-  const getID = useCallback((object: AttributesName) => object.id, []);
-  const getName = useCallback((object: AttributesName) => object.attributes.name, []);
+  const getID = useCallback((object: AttributesDisplayName) => object.id, []);
+  const getName = useCallback((object: AttributesDisplayName) => object.attributes.displayName, []);
   return <Selector objects={objects} objectID={objectID} onChangeObjectID={onChangeObjectID} getID={getID} getName={getName} />;
 };

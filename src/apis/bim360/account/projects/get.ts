@@ -18,6 +18,6 @@ export const fetch = async (accessToken: string, { accountID }: { accountID: str
   });
   const body: Response = await res.json();
   const data = body.map(utils.parseProjectData);
-  assertType<types.ProjectData[]>(body);
+  assertType<types.ProjectData[]>(data);
   return data;
 };

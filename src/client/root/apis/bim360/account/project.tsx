@@ -46,15 +46,6 @@ export const ViwerComponent: React.FC = () => {
     [updateProjectID],
   );
 
-  const onChangeHubID = useCallback(
-    (ev: React.ChangeEvent<{ value: unknown }>) => {
-      const hubID = ev.currentTarget.value;
-      if (typeof hubID !== "string") return;
-      updateHubID(hubID);
-    },
-    [updateHubID],
-  );
-
   const onChangeProjectID = useCallback(
     (ev: React.ChangeEvent<{ value: unknown }>) => {
       const projectID = ev.currentTarget.value;
@@ -75,7 +66,7 @@ export const ViwerComponent: React.FC = () => {
 
   return (
     <Viewer data={project} apiURL={apiURL} docURL={docURL}>
-      <AttributesNameSelector objectID={hubID} onChangeObjectID={onChangeHubID} objects={hubs} />
+      <AttributesNameSelector objectID={hubID} onChangeObjectID={updateHubID} objects={hubs} />
       <NameSelector objectID={projectID} onChangeObjectID={onChangeProjectID} objects={projects} />
     </Viewer>
   );

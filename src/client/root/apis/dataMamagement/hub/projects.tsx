@@ -22,17 +22,6 @@ export const ViwerComponent: React.FC = () => {
     })();
   }, []);
 
-  const onChangeHubID = useCallback(
-    (ev: React.ChangeEvent<{ value: unknown }>) => {
-      (async () => {
-        const hubID = ev.currentTarget.value;
-        if (typeof hubID !== "string") return;
-        updateHubID(hubID);
-      })();
-    },
-    [updateHubID],
-  );
-
   useEffect(() => {
     (async () => {
       const hubs = await fetch.dataManagement.hubs.get();
@@ -44,7 +33,7 @@ export const ViwerComponent: React.FC = () => {
 
   return (
     <Viewer data={projects} apiURL={apiURL} docURL={docURL}>
-      <AttributesNameSelector objectID={hubID} onChangeObjectID={onChangeHubID} objects={hubs} />
+      <AttributesNameSelector objectID={hubID} onChangeObjectID={updateHubID} objects={hubs} />
     </Viewer>
   );
 };

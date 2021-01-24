@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { ContentData, HubData, ProjectData, TopFolderData } from "../../../../../../apis/data-management/types";
+import { HubData, ProjectData } from "../../../../../../apis/data-management/types";
 import { urls } from "../../../../../../lib";
 import * as fetch from "../../../../../fetch";
 import { AttributesNameSelector } from "../../../../selectors/attributes-name-selector";
-import { FolderSelector } from "../../../../selectors/folder-selector";
+import { ContentTreeSelector, ContentTree, findSelected, findParent } from "../../../../selectors/content-tree-selector";
 import { NodeElement } from "../../../types";
 import { Viewer } from "../../../viewer";
 
@@ -15,29 +15,62 @@ export const ViwerComponent: React.FC = () => {
   const [hubID, setHubID] = useState<string | undefined>(undefined);
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [projectID, setProjectID] = useState<string | undefined>(undefined);
-  const [topFolders, setTopFolders] = useState<TopFolderData[]>([]);
-  const [folderID, setFolderID] = useState<string | undefined>(undefined);
-  const [contents, setContents] = useState<ContentData[]>([]);
+  const [contentTree, setContentTree] = useState<ContentTree>({ children: [] });
 
-  const updateFolderID = useCallback(({ projectID, folderID }: { projectID: string; folderID: string }) => {
-    (async () => {
-      setFolderID(folderID);
-      const contents = await fetch.dataManagement.project.folder.contents.get({ projectID, folderID });
-      await setContents(contents);
-    })();
-  }, []);
+  const onSelect = useCallback(
+    (projectID: string, contentTree: ContentTree, id: string) => {
+      (async () => {
+        const parent = findParent(contentTree, id);
+        if (parent?.selectedID === id) return;
+        const idx = parent ? parent.children.findIndex((child) => child?.content?.id === id) : undefined;
+        if (!parent || typeof idx !== "number" || !projectID) return;
+        parent.selectedID = id;
+        parent.children[idx] = { ...parent.children[idx] };
+        parent.children = [...parent.children];
+        const selected = findSelected(contentTree, id);
+        const folderID = selected?.content?.id;
+        if (!selected || !folderID) return;
+        const contents = await fetch.dataManagement.project.folder.contents.get({ projectID, folderID });
+        selected.children = contents.map((content) => ({ content, children: [] }));
+        setContentTree({ ...contentTree });
+      })();
+    },
+    [setContentTree],
+  );
+
+  const onSelectID = useCallback(
+    (id: string) => {
+      projectID ? onSelect(projectID, contentTree, id) : null;
+    },
+    [projectID, contentTree, onSelect],
+  );
+  const onDeleteID = (id: string) => {
+    const selected = findSelected(contentTree, id);
+    if (!selected) return;
+    delete selected?.selectedID;
+    const parent = findParent(selected, id);
+    const idx = parent ? parent.children.findIndex((child) => child?.content?.id === id) : undefined;
+    if (parent && idx) {
+      parent.children[idx] = { ...parent.children[idx] };
+      parent.children = [...parent.children];
+    }
+    setContentTree({ ...contentTree });
+  };
 
   const updateProjectID = useCallback(
     (hubID: string, projectID: string) => {
       (async () => {
         setProjectID(projectID);
         const topFolders = await fetch.dataManagement.hub.project.topFolders.get({ hubID, projectID });
-        setTopFolders(topFolders);
-        if (topFolders.length === 0) return;
-        await updateFolderID({ projectID, folderID: topFolders[0].id });
+        const contentTree: ContentTree = { children: topFolders.map((content) => ({ content, children: [] })) };
+        if (contentTree.children.length > 0) {
+          const id = contentTree.children[0].content?.id;
+          if (id) onSelect(projectID, contentTree, id);
+        }
+        setContentTree(contentTree);
       })();
     },
-    [updateFolderID],
+    [onSelect],
   );
 
   const updateHubID = useCallback(
@@ -53,31 +86,12 @@ export const ViwerComponent: React.FC = () => {
     [updateProjectID],
   );
 
-  const onChangeHubID = useCallback(
-    (ev: React.ChangeEvent<{ value: unknown }>) => {
-      const hubID = ev.currentTarget.value;
-      if (typeof hubID !== "string") return;
-      updateHubID(hubID);
-    },
-    [updateHubID],
-  );
-
   const onChangeProjectID = useCallback(
-    (ev: React.ChangeEvent<{ value: unknown }>) => {
-      const projectID = ev.currentTarget.value;
-      if (typeof hubID !== "string" || typeof projectID !== "string") return;
+    (projectID: string) => {
+      if (typeof hubID !== "string") return;
       updateProjectID(hubID, projectID);
     },
     [updateProjectID, hubID],
-  );
-
-  const onChangeFolderID = useCallback(
-    (ev: React.ChangeEvent<{ value: unknown }>) => {
-      const folderID = ev.currentTarget.value;
-      if (typeof projectID !== "string" || typeof folderID !== "string") return;
-      updateFolderID({ projectID, folderID });
-    },
-    [updateFolderID, projectID],
   );
 
   useEffect(() => {
@@ -89,11 +103,14 @@ export const ViwerComponent: React.FC = () => {
     })();
   }, [updateHubID]);
 
+  const selected = findSelected(contentTree);
+  const data = selected ? selected.children.map(({ content }) => content) : [];
+
   return (
-    <Viewer data={contents} apiURL={apiURL} docURL={docURL}>
-      <AttributesNameSelector objectID={hubID} onChangeObjectID={onChangeHubID} objects={hubs} />
+    <Viewer data={data} apiURL={apiURL} docURL={docURL}>
+      <AttributesNameSelector objectID={hubID} onChangeObjectID={updateHubID} objects={hubs} />
       <AttributesNameSelector objectID={projectID} onChangeObjectID={onChangeProjectID} objects={projects} />
-      <FolderSelector folderID={folderID} onChangeFolderID={onChangeFolderID} folders={topFolders} />
+      <ContentTreeSelector contentTree={contentTree} onSelectID={onSelectID} onDeleteID={onDeleteID} />
     </Viewer>
   );
 };

@@ -1,6 +1,7 @@
 import cookieParser from "cookie-parser";
 import express from "express";
 import session from "express-session";
+import morgan from "morgan";
 import * as apis from "../apis";
 import { urls } from "../lib";
 import * as env from "./env";
@@ -28,7 +29,7 @@ const accessTokenFetcherBuilder = () => {
   let accessToken: apis.authentication.authenticate.post.Response | null = null;
   return async () => {
     if (!accessToken) {
-      accessToken = await apis.authentication.authenticate.post.fetch(env, [apis.scopes.bucket.read], "client_credentials");
+      accessToken = await apis.authentication.authenticate.post.fetch(env, [apis.scopes.bucket.read, apis.scopes.account.read], "client_credentials");
     }
     return accessToken;
   };
@@ -44,6 +45,7 @@ const tryWrapper = (handler: express.Handler) => async (req: express.Request, re
 };
 
 const app = express();
+app.use(morgan("short"));
 app.use(cookieParser());
 
 app.use((req, _res, next) => {
@@ -221,9 +223,23 @@ app.get(
   tryWrapper(async (req, res) => {
     const accountID = req.params["accountID"];
     if (!accountID) throw new Error("NotFoundAccountID");
-    const accessToken = await accessTokenPool.get(req.sessionID);
+    const accessToken = await accessTokenFetcher();
     if (!accessToken) throw new Error("NotFoundAccessToken");
-    const project = await apis.bim360.account.projects.get.fetch(accessToken.access_token, { accountID });
+    const projects = await apis.bim360.account.projects.get.fetch(accessToken.access_token, { accountID });
+    return res.send({ data: projects });
+  }),
+);
+
+app.get(
+  urls.api.bim360.account.project.get({ accountID: ":accountID", projectID: ":projectID" }),
+  tryWrapper(async (req, res) => {
+    const accountID = req.params["accountID"];
+    if (!accountID) throw new Error("NotFoundAccountID");
+    const projectID = req.params["projectID"];
+    if (!projectID) throw new Error("NotFoundProjectID");
+    const accessToken = await accessTokenFetcher();
+    if (!accessToken) throw new Error("NotFoundAccessToken");
+    const project = await apis.bim360.account.project.get.fetch(accessToken.access_token, { accountID, projectID });
     return res.send({ data: project });
   }),
 );
