@@ -1,3 +1,4 @@
+import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState, useCallback } from "react";
 import * as apis from "../../../../../apis";
 import { ProjectData } from "../../../../../apis/bim360/types";
@@ -36,7 +37,10 @@ export const ViwerComponent: React.FC = () => {
 
   return (
     <Viewer data={projects} apiURL={apiURL} docURL={docURL}>
-      <AttributesNameSelector objectID={hubID} onChangeObjectID={updateHubID} objects={hubs} />
+      <div>
+        <Typography>Hub</Typography>
+        <AttributesNameSelector objectID={hubID} onChangeObjectID={updateHubID} objects={hubs} />
+      </div>
     </Viewer>
   );
 };

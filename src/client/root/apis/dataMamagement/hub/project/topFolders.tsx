@@ -1,3 +1,4 @@
+import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState, useCallback } from "react";
 import { HubData, ProjectData, TopFolderData } from "../../../../../../apis/data-management/types";
 import { urls } from "../../../../../../lib";
@@ -56,8 +57,14 @@ export const ViwerComponent: React.FC = () => {
 
   return (
     <Viewer data={topFolders} apiURL={apiURL} docURL={docURL}>
-      <AttributesNameSelector objectID={hubID} onChangeObjectID={updateHubID} objects={hubs} />
-      <AttributesNameSelector objectID={projectID} onChangeObjectID={onChangeProjectID} objects={projects} />
+      <div>
+        <Typography>Hub</Typography>
+        <AttributesNameSelector objectID={hubID} onChangeObjectID={updateHubID} objects={hubs} />
+      </div>
+      <div>
+        <Typography>Project</Typography>
+        <AttributesNameSelector objectID={projectID} onChangeObjectID={onChangeProjectID} objects={projects} />
+      </div>
     </Viewer>
   );
 };

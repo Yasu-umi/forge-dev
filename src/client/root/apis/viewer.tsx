@@ -13,6 +13,9 @@ const useStyles = makeStyles((theme) => ({
   content: {
     margin: theme.spacing(2),
   },
+  childrenWrapper: {
+    display: "flex",
+  },
 }));
 
 export const Viewer = ({ data, apiURL, docURL, children }: { data: unknown; apiURL: string; docURL: string; children?: React.ReactNode }) => {
@@ -31,10 +34,12 @@ export const Viewer = ({ data, apiURL, docURL, children }: { data: unknown; apiU
           <Typography>{apiURL}</Typography>
         </Link>
       </div>
-      <div className={styles.content}>
-        <Typography>API Required</Typography>
-        {children}
-      </div>
+      {children ? (
+        <div className={styles.content}>
+          <Typography>API Required</Typography>
+          <div className={styles.childrenWrapper}>{children}</div>
+        </div>
+      ) : null}
       <div className={styles.content}>
         <Typography>API Response</Typography>
         <TextareaAutosize rowsMin={3} style={{ width: "100%" }} value={JSON.stringify(data, null, 2)} />
