@@ -286,6 +286,11 @@ resource "aws_codebuild_project" "main" {
     }
 
     environment_variable {
+      name  = "ECS_CLUSTER"
+      value = aws_ecs_cluster.main.name
+    }
+
+    environment_variable {
       name  = "HOST"
       value = aws_alb.main.dns_name
     }
