@@ -115,7 +115,7 @@ resource "aws_codepipeline" "main" {
       configuration = {
         Owner                = "Yasu-umi"
         Repo                 = var.app
-        Branch               = "release/${terraform.workspace}"
+        Branch               = "master"
         OAuthToken           = "XXX"
         PollForSourceChanges = true
       }
