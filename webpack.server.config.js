@@ -29,8 +29,6 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
-      "process.env.CLIENT_ID": JSON.stringify(process.env.CLIENT_ID),
-      "process.env.CLIENT_SCRET": JSON.stringify(process.env.CLIENT_SCRET),
       "process.env.HOST": JSON.stringify(process.env.HOST),
     }),
   ],

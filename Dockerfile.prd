@@ -2,12 +2,14 @@ FROM node:15.6.0
 
 WORKDIR /forge-dev
 
+ARG HOST
+
 COPY package.json package-lock.json tsconfig.json tsconfig.client.json tsconfig.server.json webpack.client.config.js webpack.server.config.js /forge-dev/
 RUN npm i
 
-COPY .env /forge-dev/.env
 COPY src /forge-dev/src
-COPY public/inde.html /forge-dev/public/index.html
-RUN npm run build
+COPY public/index.html /forge-dev/public/index.html
+COPY public/login.html /forge-dev/public/login.html
+RUN HOST=$HOST npm run build
 
-CMD ["npm", "run", "start:sever"]
+CMD ["npm", "run", "start:server"]
