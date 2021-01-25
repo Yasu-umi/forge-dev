@@ -48,10 +48,6 @@ const app = express();
 app.use(morgan("short"));
 app.use(cookieParser());
 
-app.use((req, _res, next) => {
-  console.log(req.method, req.url);
-  next();
-});
 app.use(
   session({
     secret: "forge-dev",
@@ -64,6 +60,8 @@ app.use(
     saveUninitialized: true,
   }),
 );
+
+app.use("/healthcheck", (_req, res) => res.sendStatus(200));
 
 app.get("/", async (req, res, next) => {
   // check logined
