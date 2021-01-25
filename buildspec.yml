@@ -10,6 +10,8 @@ phases:
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - echo Logging in to Amazon ECR...
       - $(aws ecr get-login --region $AWS_REGION --no-include-email)
+      - echo Pulling the Docker image from Amazon ECR...
+      - docker pull $REPOSITORY_URI:latest
   build:
     commands:
       - echo Build started on `date`
