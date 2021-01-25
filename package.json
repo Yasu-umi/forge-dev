@@ -45,15 +45,15 @@
   },
   "scripts": {
     "build:client": "webpack --color --progress -c ./webpack.client.config.js",
-    "build:client:watch": "env-cmd -f .env webpack --color --progress --watch  -c ./webpack.client.config.js",
+    "build:client:watch": "env-cmd -f .dev.env webpack --color --progress --watch  -c ./webpack.client.config.js",
     "build:server": "webpack --color --progress -c ./webpack.server.config.js",
-    "build:server:watch": "env-cmd -f .env webpack --color --progress --watch -c ./webpack.server.config.js",
+    "build:server:watch": "env-cmd -f .dev.env webpack --color --progress --watch -c ./webpack.server.config.js",
     "build": "npm-run-all -p build:client build:server",
     "build:watch": "npm-run-all -p build:client:watch build:server:watch",
     "lint": "eslint . --ext .tsx --ext .ts",
     "fmt": "npm run lint -- --fix",
     "start:server": "node ./dist/app.js",
-    "start:server:watch": "env-cmd -f .env nodemon --watch ./dist/app.js ./dist/app.js",
+    "start:server:watch": "env-cmd -f .dev.env nodemon --watch ./dist/app.js ./dist/app.js",
     "dev": "npm-run-all -p build:client:watch build:server:watch start:server:watch"
   }
 }
