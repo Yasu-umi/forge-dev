@@ -29,7 +29,6 @@ export const fetch = async (accessToken: string, { hubID, projectID }: { hubID: 
   });
   const body: Response = await res.json();
   const data = body.data.map((d) => utils.parseFolder(d));
-  console.log(JSON.stringify(data, null, 2));
   assertType<types.TopFolderData[]>(data);
   return data;
 };

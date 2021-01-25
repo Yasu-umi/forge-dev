@@ -21,7 +21,6 @@ export const Selector = <T,>({
   const onChange = useCallback(
     (ev: React.ChangeEvent<{ value: unknown }>) => {
       const id = ev.target.value;
-      console.log("ev.target.value", ev.target.value);
       if (typeof id === "string") onChangeObjectID(id);
     },
     [onChangeObjectID],
