@@ -26,6 +26,11 @@ export const fetch = async (accessToken: string, { hubID }: { hubID: string }): 
     },
   });
   const body: Response = await res.json();
-  assertType<types.ProjectData[]>(body.data);
+  try {
+    assertType<types.ProjectData[]>(body.data);
+  } catch (e) {
+    console.log(JSON.stringify(body.data, null, 2));
+    console.error(e);
+  }
   return body.data;
 };

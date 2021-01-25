@@ -41,6 +41,11 @@ export const fetch = async (accessToken: string): Promise<types.HubData[] | unde
     body.errors.forEach((err) => console.error(err));
     return;
   }
-  assertType<types.HubData[]>(body.data);
+  try {
+    assertType<types.HubData[]>(body.data);
+  } catch (e) {
+    console.log(JSON.stringify(body.data, null, 2));
+    console.error(e);
+  }
   return body.data;
 };

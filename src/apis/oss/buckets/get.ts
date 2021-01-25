@@ -19,6 +19,11 @@ export const fetch = async (accessToken: string): Promise<types.BucketData[]> =>
     },
   });
   const body: Response = await res.json();
-  assertType<types.BucketData[]>(body.items);
+  try {
+    assertType<types.BucketData[]>(body.items);
+  } catch (e) {
+    console.log(JSON.stringify(body.items, null, 2));
+    console.error(e);
+  }
   return body.items;
 };

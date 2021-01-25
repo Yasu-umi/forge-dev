@@ -18,6 +18,11 @@ export const fetch = async (accessToken: string, { accountID }: { accountID: str
   });
   const body: Response = await res.json();
   const data = body.map(utils.parseProjectData);
-  assertType<types.ProjectData[]>(data);
+  try {
+    assertType<types.ProjectData[]>(data);
+  } catch (e) {
+    console.log(JSON.stringify(data, null, 2));
+    console.error(e);
+  }
   return data;
 };

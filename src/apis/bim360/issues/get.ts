@@ -32,6 +32,11 @@ export const fetch = async (accessToken: string, { issueContainerID }: { issueCo
   });
   const body: Response = await res.json();
   const data = body.data.map((d) => utils.parseIssueData(d));
-  assertType<types.IssueData[]>(data);
+  try {
+    assertType<types.IssueData[]>(data);
+  } catch (e) {
+    console.log(JSON.stringify(data, null, 2));
+    console.error(e);
+  }
   return data;
 };
