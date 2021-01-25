@@ -27,3 +27,7 @@ variable "ecs_container_port" {
 variable "account_id" {
   type = string
 }
+
+variable "codestar_connection_arn" {
+  type = string
+}

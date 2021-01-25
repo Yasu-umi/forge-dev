@@ -80,15 +80,36 @@ data "aws_iam_policy_document" "codepipeline" {
 
     resources = ["*"]
   }
+
+  // TODO: more strict
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:*"
+    ]
+    resources = [
+      "*",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "codestar-connections:UseConnection",
+    ]
+
+    resources = [var.codestar_connection_arn]
+  }
 }
 
 resource "aws_iam_role" "codepipeline" {
-  name               = "${var.app}-${terraform.workspace}-main-codepipline"
+  name               = "${var.app}-${terraform.workspace}-main-codepipeline"
   assume_role_policy = data.aws_iam_policy_document.codepipeline_sts.json
 }
 
 resource "aws_iam_role_policy" "codepipeline" {
-  name   = "${var.app}-${terraform.workspace}-main-codepipline"
+  name   = "${var.app}-${terraform.workspace}-main-codepipeline"
   role   = aws_iam_role.codepipeline.name
   policy = data.aws_iam_policy_document.codepipeline.json
 }
@@ -107,17 +128,15 @@ resource "aws_codepipeline" "main" {
     action {
       name             = "Source"
       category         = "Source"
-      owner            = "ThirdParty"
-      provider         = "GitHub"
+      owner            = "AWS"
+      provider         = "CodeStarSourceConnection"
       version          = "1"
       output_artifacts = ["source_output"]
 
       configuration = {
-        Owner                = "Yasu-umi"
-        Repo                 = var.app
-        Branch               = "master"
-        OAuthToken           = "XXX"
-        PollForSourceChanges = true
+        ConnectionArn    = var.codestar_connection_arn
+        FullRepositoryId = "Yasu-umi/forge-dev"
+        BranchName       = "master"
       }
     }
   }
@@ -286,8 +305,13 @@ resource "aws_codebuild_project" "main" {
     }
 
     environment_variable {
+      name  = "CONTAINER_NAME"
+      value = "main"
+    }
+
+    environment_variable {
       name  = "HOST"
-      value = aws_alb.main.dns_name
+      value = "http://${aws_alb.main.dns_name}"
     }
   }
 }

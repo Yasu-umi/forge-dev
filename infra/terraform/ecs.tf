@@ -41,7 +41,7 @@ data "aws_iam_policy_document" "ecs_tasks" {
     effect = "Allow"
 
     resources = [
-      "arn:aws:ssm:ap-northeas-1:${var.account_id}:parameter/${var.app}/${terraform.workspace}/main/*",
+      "arn:aws:ssm:ap-northeast-1:${var.account_id}:parameter/${var.app}/${terraform.workspace}/main/*",
     ]
 
     actions = [
@@ -81,7 +81,7 @@ data "template_file" "main_ecs_task_definition" {
     containerPort = var.ecs_container_port["main"]
     ssm_prefix    = "/${var.app}/${terraform.workspace}/main"
     awslogs_group = aws_cloudwatch_log_group.ecs.name
-    host          = aws_alb.main.dns_name
+    host          = "http://${aws_alb.main.dns_name}"
     region        = "ap-northeast-1"
   }
 }
@@ -107,23 +107,21 @@ resource "aws_ecs_service" "main" {
   launch_type                        = "FARGATE"
   deployment_minimum_healthy_percent = 100
   deployment_maximum_percent         = 200
-  # iam_role                           = aws_iam_role.ecs.arn
 
   scheduling_strategy = "REPLICA"
 
+  health_check_grace_period_seconds = 30
+
   network_configuration {
-    subnets          = aws_subnet.external.*.id
-    security_groups  = [aws_security_group.ecs_main.id]
-    assign_public_ip = false
+    subnets         = aws_subnet.external.*.id
+    security_groups = [aws_security_group.ecs_main.id]
+    // use NAT Gateway ?
+    assign_public_ip = true
   }
 
   load_balancer {
     target_group_arn = aws_alb_target_group.main.arn
     container_name   = "main"
     container_port   = var.ecs_container_port["main"]
-  }
-
-  deployment_controller {
-    type = "CODE_DEPLOY"
   }
 }
