@@ -1,4 +1,5 @@
-.env
+.dev.env
+.prd.env
 .npm/
 node_modules/
 dist/
