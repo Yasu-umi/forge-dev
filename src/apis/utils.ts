@@ -10,6 +10,15 @@ export const parseFolder = (folder: types.Folder): types.Folder => ({
   },
 });
 
+export const parseVersion = (version: types.Version): types.Version => ({
+  ...version,
+  attributes: {
+    ...version.attributes,
+    createTime: new Date(version.attributes.createTime),
+    lastModifiedTime: new Date(version.attributes.lastModifiedTime),
+  },
+});
+
 export const parseContent = (content: types.ContentType): types.ContentType => {
   if (content.type === "folders") {
     return parseFolder(content);
@@ -25,14 +34,7 @@ export const parseContent = (content: types.ContentType): types.ContentType => {
     };
   }
   if (content.type === "versions") {
-    return {
-      ...content,
-      attributes: {
-        ...content.attributes,
-        createTime: new Date(content.attributes.createTime),
-        lastModifiedTime: new Date(content.attributes.lastModifiedTime),
-      },
-    };
+    return parseVersion(content);
   }
   return content;
 };
