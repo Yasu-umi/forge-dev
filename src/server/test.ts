@@ -14,38 +14,38 @@ import * as env from "./env";
   })();
 
   const { hubID, issueContainerID } = await (async () => {
-    const hubs = await apis.dataManagement.hubs.get.fetch(access_token);
+    const hubs = await apis.project.hubs.get.fetch(access_token);
     if (!hubs) throw new Error("NotFoundHubs");
 
-    assertType<apis.dataManagement.types.HubData[]>(hubs);
+    assertType<apis.types.HubData[]>(hubs);
     console.log(JSON.stringify(hubs));
 
     const hubID = hubs[0].id;
 
-    const projects = await apis.dataManagement.hub.projects.get.fetch(access_token, {
+    const projects = await apis.project.hub.projects.get.fetch(access_token, {
       hubID,
     });
-    assertType<apis.dataManagement.types.ProjectData[]>(projects);
+    assertType<apis.types.ProjectData[]>(projects);
     console.log(JSON.stringify(projects));
 
     const projectID = projects[0].id;
 
-    const project = await apis.dataManagement.hub.project.get.fetch(access_token, {
+    const project = await apis.project.hub.project.get.fetch(access_token, {
       hubID,
       projectID,
     });
-    assertType<apis.dataManagement.types.ProjectData>(project);
+    assertType<apis.types.ProjectData>(project);
     console.log(JSON.stringify(project));
     const issueContainerID = project.relationships.issues.data.id;
 
     return { hubID, issueContainerID };
   })();
   await (async () => {
-    const accountID = apis.bim360.utils.getAccountID(hubID);
-    const projects = await apis.bim360.account.projects.get.fetch(access_token, {
+    const accountID = apis.hq.utils.getAccountID(hubID);
+    const projects = await apis.hq.account.projects.get.fetch(access_token, {
       accountID,
     });
-    assertType<apis.bim360.account.projects.get.Response>(projects);
+    assertType<apis.hq.account.projects.get.Response>(projects);
   })();
 
   access_token = await (async () => {
@@ -59,10 +59,10 @@ import * as env from "./env";
   })();
 
   await (async () => {
-    const issues = await apis.bim360.issues.get.fetch(access_token, {
+    const issues = await apis.issues.container.qualityIssues.get.fetch(access_token, {
       issueContainerID,
     });
-    assertType<apis.bim360.issues.get.Response>(issues);
+    assertType<apis.types.issueStatus[]>(issues);
   })();
 
   process.exit();

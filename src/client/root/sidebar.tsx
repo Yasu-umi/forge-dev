@@ -10,7 +10,8 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import React from "react";
-import { Node, NodeElement, tree } from "./apis";
+import { tree } from "./apis/root";
+import { Node, NodeElement } from "./apis/types";
 
 const NodeList = ({ node, nested, setNodeElement }: { node: Node; nested: number; setNodeElement: (value: NodeElement) => void }) => {
   const theme = useTheme();

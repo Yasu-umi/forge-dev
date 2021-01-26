@@ -5,7 +5,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { useState } from "react";
 import { urls } from "../../lib";
-import { NodeElement } from "./apis";
+import { NodeElement } from "./apis/types";
 import { Sidebar } from "./sidebar";
 
 const useStyles = makeStyles((theme) => ({

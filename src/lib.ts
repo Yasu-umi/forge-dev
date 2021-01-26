@@ -11,43 +11,47 @@ export const urls = {
         get: "/api/oauth/callback",
       },
     },
-    dataManagement: {
-      hubs: {
-        get: "/api/data-management/hubs",
-      },
-      hub: {
-        get: ({ hubID }: { hubID: string }) => `/api/data-management/hubs/${hubID}`,
-        projects: {
-          get: ({ hubID }: { hubID: string }) => `/api/data-management/hubs/${hubID}/projects`,
-        },
-        project: {
-          get: ({ hubID, projectID }: { hubID: string; projectID: string }) => `/api/data-management/hubs/${hubID}/projects/${projectID}`,
-          topFolders: {
-            get: ({ hubID, projectID }: { hubID: string; projectID: string }) =>
-              `/api/data-management/hubs/${hubID}/projects/${projectID}/top-folders`,
-          },
-        },
-      },
+    data: {
       project: {
         folder: {
-          get: ({ projectID, folderID }: { projectID: string; folderID: string }) => `/api/data-management/project/${projectID}/folders/${folderID}`,
+          get: ({ projectID, folderID }: { projectID: string; folderID: string }) => `/api/data/project/${projectID}/folders/${folderID}`,
           contents: {
-            get: ({ projectID, folderID }: { projectID: string; folderID: string }) =>
-              `/api/data-management/project/${projectID}/folders/${folderID}/contents`,
+            get: ({ projectID, folderID }: { projectID: string; folderID: string }) => `/api/data/project/${projectID}/folders/${folderID}/contents`,
           },
         },
       },
     },
-    bim360: {
-      issues: {
-        get: ({ issueContainerID }: { issueContainerID: string }) => `/api/bim360/${issueContainerID}/issues`,
-      },
+    hq: {
       account: {
         projects: {
-          get: ({ accountID }: { accountID: string }) => `/api/bim360/account/${accountID}/projects`,
+          get: ({ accountID }: { accountID: string }) => `/api/hq/account/${accountID}/projects`,
         },
         project: {
-          get: ({ accountID, projectID }: { accountID: string; projectID: string }) => `/api/bim360/account/${accountID}/project/${projectID}`,
+          get: ({ accountID, projectID }: { accountID: string; projectID: string }) => `/api/hq/account/${accountID}/project/${projectID}`,
+        },
+      },
+    },
+    issues: {
+      container: {
+        qualityIssues: {
+          get: ({ issueContainerID }: { issueContainerID: string }) => `/api/issues/container/${issueContainerID}/quality-issues`,
+        },
+      },
+    },
+    project: {
+      hubs: {
+        get: "/api/project/hubs",
+      },
+      hub: {
+        get: ({ hubID }: { hubID: string }) => `/api/project/hubs/${hubID}`,
+        projects: {
+          get: ({ hubID }: { hubID: string }) => `/api/project/hubs/${hubID}/projects`,
+        },
+        project: {
+          get: ({ hubID, projectID }: { hubID: string; projectID: string }) => `/api/project/hubs/${hubID}/projects/${projectID}`,
+          topFolders: {
+            get: ({ hubID, projectID }: { hubID: string; projectID: string }) => `/api/project/hubs/${hubID}/projects/${projectID}/topFolders`,
+          },
         },
       },
     },
