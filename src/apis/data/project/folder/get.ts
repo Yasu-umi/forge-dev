@@ -29,6 +29,11 @@ export const fetch = async (accessToken: string, { projectID, folderID }: { proj
   });
   const body: Response = await res.json();
   const data = utils.parseFolder(body.data);
-  assertType<types.Folder>(data);
+  try {
+    assertType<types.Folder>(data);
+  } catch (e) {
+    console.log(JSON.stringify(data, null, 2));
+    console.error(e);
+  }
   return data;
 };
