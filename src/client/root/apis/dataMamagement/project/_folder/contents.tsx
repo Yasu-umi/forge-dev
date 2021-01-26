@@ -24,15 +24,14 @@ export const ViwerComponent: React.FC = () => {
         const parent = findParent(contentTree, id);
         if (parent?.selectedID === id) return;
         const idx = parent ? parent.children.findIndex((child) => child?.content?.id === id) : undefined;
-        if (!parent || typeof idx !== "number" || !projectID) return;
+        if (!parent || typeof idx !== "number") return;
+        const selected = parent.children[idx];
+        if (!projectID || !selected) return;
         parent.selectedID = id;
-        parent.children[idx] = { ...parent.children[idx] };
-        parent.children = [...parent.children];
-        const selected = findSelected(contentTree, id);
-        const folderID = selected?.content?.id;
-        if (!selected || !folderID) return;
-        const contents = await fetch.dataManagement.project.folder.contents.get({ projectID, folderID });
+        const contents = await fetch.dataManagement.project.folder.contents.get({ projectID, folderID: id });
         selected.children = contents.map((content) => ({ content, children: [] }));
+        parent.children[idx] = { ...selected };
+        parent.children = [...parent.children];
         setContentTree({ ...contentTree });
       })();
     },

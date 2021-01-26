@@ -10,15 +10,15 @@ export const findSelected = (tree: ContentTree, id?: string): ContentTree | unde
   if (id) {
     if (tree.content && tree.content.id === id) return tree;
     return tree.children.find((child) => findSelected(child, id));
-  } else {
-    if (tree.selectedID) {
-      const selectedChild = tree.children.find((child) => findSelected(child, tree.selectedID));
-      return selectedChild;
-    } else {
-      return tree;
-    }
   }
+  if (tree.selectedID) {
+    const child = tree.children.find((child) => child.content?.id === tree.selectedID);
+    if (child) return findSelected(child);
+    throw new Error("NotFoundChild");
+  }
+  return tree;
 };
+
 export const findParent = (tree: ContentTree, id: string): ContentTree | undefined => {
   if (tree?.content?.id === id) return undefined;
   if (tree.children.find((child) => child?.content?.id === id)) return tree;
@@ -43,7 +43,7 @@ export const ContentTreeSelector = ({
         getID={(tree) => tree?.content?.id || ""}
         getName={(tree) => tree?.content?.attributes.displayName || ""}
         onChangeObjectID={onSelectID}
-        objects={contentTree.children}
+        objects={contentTree.children.filter((child) => child.content?.type === "folders")}
       />
       {contentTree.content && contentTree?.selectedID ? (
         <IconButton onClick={() => (contentTree.selectedID ? onDeleteID(contentTree.selectedID) : null)}>
