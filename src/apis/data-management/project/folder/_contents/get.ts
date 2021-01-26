@@ -40,8 +40,12 @@ export const fetch = async (accessToken: string, { projectID, folderID }: { proj
   const body: Response = await res.json();
   const data = body.data.map((d) => utils.parseContent(d));
   for (const d of data) {
-    console.log(JSON.stringify(d, null, 2));
-    assertType<types.ContentData>(d);
+    try {
+      assertType<types.ContentData>(d);
+    } catch (e) {
+      console.log(JSON.stringify(d, null, 2));
+      console.error(e);
+    }
   }
   return data;
 };
