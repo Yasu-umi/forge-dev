@@ -1,7 +1,7 @@
 import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState, useCallback } from "react";
-import { IssueData } from "../../../../../apis/types";
-import { HubData, ProjectData } from "../../../../../apis/types";
+import { Issue } from "../../../../../apis/types";
+import { Hub, Project } from "../../../../../apis/types";
 import { urls } from "../../../../../lib";
 import * as fetch from "../../../../fetch";
 import { AttributesNameSelector } from "../../../selectors/attributes-name-selector";
@@ -12,11 +12,11 @@ export const apiURL = urls.api.issues.container.qualityIssues.get({ issueContain
 export const docURL = "https://forge.autodesk.com/en/docs/bim360/v1/reference/http/field-issues-GET/";
 
 export const ViwerComponent: React.FC = () => {
-  const [hubs, setHubs] = useState<HubData[]>([]);
+  const [hubs, setHubs] = useState<Hub[]>([]);
   const [hubID, setHubID] = useState<string | undefined>(undefined);
-  const [projects, setProjects] = useState<ProjectData[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [projectID, setProjectID] = useState<string | undefined>(undefined);
-  const [issues, setIssues] = useState<IssueData[]>([]);
+  const [issues, setIssues] = useState<Issue[]>([]);
 
   const updateProjectID = useCallback(
     (projectID: string) => {

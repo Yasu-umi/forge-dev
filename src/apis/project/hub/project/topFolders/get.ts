@@ -12,13 +12,13 @@ export type Response = {
       href: "/project/v1/hubs/a.hub.id.123/projects/a.project.id.xyz/topFolders";
     };
   };
-  data: types.TopFolderData[];
+  data: types.Folder[];
 };
 
 export const url = ({ hubID, projectID }: { hubID: string; projectID: string }) =>
   `https://developer.api.autodesk.com/project/v1/hubs/${hubID}/projects/${projectID}/topFolders`;
 
-export const fetch = async (accessToken: string, { hubID, projectID }: { hubID: string; projectID: string }): Promise<types.TopFolderData[]> => {
+export const fetch = async (accessToken: string, { hubID, projectID }: { hubID: string; projectID: string }): Promise<types.Folder[]> => {
   const { fetch } = fetchPonyfill();
   const res = await fetch(url({ hubID, projectID }), {
     method: "GET",
@@ -30,7 +30,7 @@ export const fetch = async (accessToken: string, { hubID, projectID }: { hubID: 
   const body: Response = await res.json();
   const data = body.data.map((d) => utils.parseFolder(d));
   try {
-    assertType<types.TopFolderData[]>(data);
+    assertType<types.Folder[]>(data);
   } catch (e) {
     console.log(JSON.stringify(data, null, 2));
     console.error(e);

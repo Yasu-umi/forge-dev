@@ -4,7 +4,7 @@ import * as types from "../../../types";
 import * as utils from "../../../utils";
 
 export type Response = {
-  data: types.IssueData[];
+  data: types.Issue[];
   meta: {
     page: {
       offset: number;
@@ -21,7 +21,7 @@ export type Response = {
 export const url = ({ issueContainerID }: { issueContainerID: string }) =>
   `https://developer.api.autodesk.com/issues/v1/containers/${issueContainerID}/quality-issues`;
 
-export const fetch = async (accessToken: string, { issueContainerID }: { issueContainerID: string }): Promise<types.IssueData[]> => {
+export const fetch = async (accessToken: string, { issueContainerID }: { issueContainerID: string }): Promise<types.Issue[]> => {
   const { fetch } = fetchPonyfill();
   const res = await fetch(url({ issueContainerID }), {
     method: "GET",
@@ -31,9 +31,9 @@ export const fetch = async (accessToken: string, { issueContainerID }: { issueCo
     },
   });
   const body: Response = await res.json();
-  const data = body.data.map((d) => utils.parseIssueData(d));
+  const data = body.data.map((d) => utils.parseIssue(d));
   try {
-    assertType<types.IssueData[]>(data);
+    assertType<types.Issue[]>(data);
   } catch (e) {
     console.log(JSON.stringify(data, null, 2));
     console.error(e);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { HubData } from "../../../../apis/types";
+import { Hub } from "../../../../apis/types";
 import { urls } from "../../../../lib";
 import * as fetch from "../../../fetch";
 import { NodeElement } from "../types";
@@ -9,7 +9,7 @@ export const apiURL = urls.api.project.hubs.get;
 export const docURL = "https://forge.autodesk.com/en/docs/data/v2/reference/http/hubs-GET/";
 
 export const ViwerComponent: React.FC = () => {
-  const [hubs, setHubs] = useState<HubData[]>([]);
+  const [hubs, setHubs] = useState<Hub[]>([]);
   useEffect(() => {
     (async () => {
       setHubs(await fetch.project.hubs.get());

@@ -1,8 +1,8 @@
-import { ProjectData } from "./types";
+import { Project } from "./types";
 
 export const getAccountID = (hubID: string) => hubID.replace(/^b./, "");
 
-export const parseProjectData = (project: ProjectData): ProjectData => ({
+export const parseProject = (project: Project): Project => ({
   ...project,
   start_date: project.start_date ? new Date(project.start_date) : null,
   end_date: project.end_date ? new Date(project.end_date) : null,

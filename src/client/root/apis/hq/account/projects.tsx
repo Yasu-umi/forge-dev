@@ -1,8 +1,8 @@
 import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState, useCallback } from "react";
 import * as apis from "../../../../../apis";
-import { ProjectData } from "../../../../../apis/hq/types";
-import { HubData } from "../../../../../apis/types";
+import { Project } from "../../../../../apis/hq/types";
+import { Hub } from "../../../../../apis/types";
 import { urls } from "../../../../../lib";
 import * as fetch from "../../../../fetch";
 import { AttributesNameSelector } from "../../../selectors/attributes-name-selector";
@@ -13,9 +13,9 @@ export const apiURL = urls.api.hq.account.projects.get({ accountID: ":accountID"
 export const docURL = "https://forge.autodesk.com/en/docs/bim360/v1/reference/http/projects-GET/";
 
 export const ViwerComponent: React.FC = () => {
-  const [hubs, setHubs] = useState<HubData[]>([]);
+  const [hubs, setHubs] = useState<Hub[]>([]);
   const [hubID, setHubID] = useState<string | undefined>(undefined);
-  const [projects, setProjects] = useState<ProjectData[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
 
   const updateHubID = useCallback((hubID: string) => {
     (async () => {

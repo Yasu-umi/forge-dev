@@ -1,6 +1,6 @@
 import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState, useCallback } from "react";
-import { HubData, ProjectData, TopFolderData } from "../../../../../../apis/types";
+import { Hub, Project, Folder } from "../../../../../../apis/types";
 import { urls } from "../../../../../../lib";
 import * as fetch from "../../../../../fetch";
 import { AttributesNameSelector } from "../../../../selectors/attributes-name-selector";
@@ -11,11 +11,11 @@ export const apiURL = urls.api.project.hub.project.topFolders.get({ hubID: ":hub
 export const docURL = "https://forge.autodesk.com/en/docs/data/v2/reference/http/hubs-hub_id-projects-project_id-topFolders-GET/";
 
 export const ViwerComponent: React.FC = () => {
-  const [hubs, setHubs] = useState<HubData[]>([]);
+  const [hubs, setHubs] = useState<Hub[]>([]);
   const [hubID, setHubID] = useState<string | undefined>(undefined);
-  const [projects, setProjects] = useState<ProjectData[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [projectID, setProjectID] = useState<string | undefined>(undefined);
-  const [topFolders, setTopFolders] = useState<TopFolderData[]>([]);
+  const [topFolders, setTopFolders] = useState<Folder[]>([]);
 
   const updateProjectID = useCallback((hubID: string, projectID: string) => {
     (async (hubID: string, projectID: string) => {

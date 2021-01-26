@@ -1,4 +1,4 @@
-export type HubData = {
+export type Hub = {
   type: "hubs";
   id: string;
   attributes: {
@@ -21,7 +21,7 @@ export type HubData = {
   };
 };
 
-export type ProjectData = {
+export type Project = {
   type: "projects";
   id: string;
   attributes: {

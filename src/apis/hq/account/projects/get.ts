@@ -3,11 +3,11 @@ import { assertType } from "typescript-is";
 import * as types from "../../types";
 import * as utils from "../../utils";
 
-export type Response = types.ProjectData[];
+export type Response = types.Project[];
 
 export const url = ({ accountID }: { accountID: string }) => `https://developer.api.autodesk.com/hq/v1/accounts/${accountID}/projects`;
 
-export const fetch = async (accessToken: string, { accountID }: { accountID: string }): Promise<types.ProjectData[]> => {
+export const fetch = async (accessToken: string, { accountID }: { accountID: string }): Promise<types.Project[]> => {
   const { fetch } = fetchPonyfill();
   const res = await fetch(url({ accountID }), {
     method: "GET",
@@ -17,9 +17,9 @@ export const fetch = async (accessToken: string, { accountID }: { accountID: str
     },
   });
   const body: Response = await res.json();
-  const data = body.map(utils.parseProjectData);
+  const data = body.map(utils.parseProject);
   try {
-    assertType<types.ProjectData[]>(data);
+    assertType<types.Project[]>(data);
   } catch (e) {
     console.log(JSON.stringify(data, null, 2));
     console.error(e);

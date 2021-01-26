@@ -10,13 +10,13 @@ export type Response = {
       href: string;
     };
   };
-  data: types.ProjectData;
+  data: types.Project;
 };
 
 export const url = ({ hubID, projectID }: { hubID: string; projectID: string }) =>
   `https://developer.api.autodesk.com/project/v1/hubs/${hubID}/projects/${projectID}`;
 
-export const fetch = async (accessToken: string, { hubID, projectID }: { hubID: string; projectID: string }): Promise<types.ProjectData> => {
+export const fetch = async (accessToken: string, { hubID, projectID }: { hubID: string; projectID: string }): Promise<types.Project> => {
   const { fetch } = fetchPonyfill();
   const res = await fetch(url({ hubID, projectID }), {
     method: "GET",

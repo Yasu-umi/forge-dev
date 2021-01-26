@@ -12,7 +12,7 @@ export type Response = {
           href: string;
         };
       };
-      data: types.HubData;
+      data: types.Hub;
     }
   | {
       errors: {
@@ -26,7 +26,7 @@ export type Response = {
 
 export const url = ({ hubID }: { hubID: string }) => `https://developer.api.autodesk.com/project/v1/hubs/${hubID}`;
 
-export const fetch = async (accessToken: string, { hubID }: { hubID: string }): Promise<types.HubData | undefined> => {
+export const fetch = async (accessToken: string, { hubID }: { hubID: string }): Promise<types.Hub | undefined> => {
   const { fetch } = fetchPonyfill();
   const res = await fetch(url({ hubID }), {
     method: "GET",

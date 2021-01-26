@@ -17,7 +17,7 @@ import * as env from "./env";
     const hubs = await apis.project.hubs.get.fetch(access_token);
     if (!hubs) throw new Error("NotFoundHubs");
 
-    assertType<apis.types.HubData[]>(hubs);
+    assertType<apis.types.Hub[]>(hubs);
     console.log(JSON.stringify(hubs));
 
     const hubID = hubs[0].id;
@@ -25,7 +25,7 @@ import * as env from "./env";
     const projects = await apis.project.hub.projects.get.fetch(access_token, {
       hubID,
     });
-    assertType<apis.types.ProjectData[]>(projects);
+    assertType<apis.types.Project[]>(projects);
     console.log(JSON.stringify(projects));
 
     const projectID = projects[0].id;
@@ -34,7 +34,7 @@ import * as env from "./env";
       hubID,
       projectID,
     });
-    assertType<apis.types.ProjectData>(project);
+    assertType<apis.types.Project>(project);
     console.log(JSON.stringify(project));
     const issueContainerID = project.relationships.issues.data.id;
 
@@ -62,7 +62,7 @@ import * as env from "./env";
     const issues = await apis.issues.container.qualityIssues.get.fetch(access_token, {
       issueContainerID,
     });
-    assertType<apis.types.issueStatus[]>(issues);
+    assertType<apis.types.IssueStatusType[]>(issues);
   })();
 
   process.exit();

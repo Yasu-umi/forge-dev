@@ -13,7 +13,7 @@ export type Response = {
           href: string;
         };
       };
-      data: types.HubData[];
+      data: types.Hub[];
     }
   | {
       errors: {
@@ -27,7 +27,7 @@ export type Response = {
 
 export const url = "https://developer.api.autodesk.com/project/v1/hubs";
 
-export const fetch = async (accessToken: string): Promise<types.HubData[] | undefined> => {
+export const fetch = async (accessToken: string): Promise<types.Hub[] | undefined> => {
   const { fetch } = fetchPonyfill();
   const res = await fetch(url, {
     method: "GET",
@@ -42,7 +42,7 @@ export const fetch = async (accessToken: string): Promise<types.HubData[] | unde
     return;
   }
   try {
-    assertType<types.HubData[]>(body.data);
+    assertType<types.Hub[]>(body.data);
   } catch (e) {
     console.log(JSON.stringify(body.data, null, 2));
     console.error(e);

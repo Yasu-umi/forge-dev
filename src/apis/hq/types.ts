@@ -1,14 +1,14 @@
-export type projectStatus = "active" | "pending" | "inactive" | "archived";
+export type ProjectStatusType = "active" | "pending" | "inactive" | "archived";
 
-export type language = "en" | "de";
+export type LanguageType = "en" | "de";
 
-export type serviceType = "field" | "glue" | "schedule" | "plan" | "doc_manager";
+export type ServiceType = "field" | "glue" | "schedule" | "plan" | "doc_manager";
 
-export type constructionType = "New Construction" | "Renovation";
+export type ConstructionType = "New Construction" | "Renovation";
 
-export type contractType = "Construction Management (CM) at Risk" | "Design-Bid" | "Design-Bid-Build" | "Design-Build-Operate" | "IPD";
+export type ContractType = "Construction Management (CM) at Risk" | "Design-Bid" | "Design-Bid-Build" | "Design-Build-Operate" | "IPD";
 
-export type projectType =
+export type ProjectType =
   | "Commercial"
   | "Convention Center"
   | "Data Center"
@@ -67,7 +67,7 @@ export type projectType =
   | "Template Project"
   | "Training Project";
 
-export type currency =
+export type CurrencyType =
   | "USD"
   | "AUD"
   | "CAD"
@@ -246,16 +246,16 @@ export type timezone =
   | "Pacific/Apia"
   | "Pacific/Fakaofo";
 
-export type ProjectData = {
+export type Project = {
   id: string;
   account_id: string;
   name: string;
   start_date: Date | null;
   end_date: Date | null;
-  project_type: string;
+  project_type: ProjectType;
   value: number | null;
-  currency: currency | null;
-  status: projectStatus;
+  currency: CurrencyType | null;
+  status: ProjectStatusType;
   job_number: string | null;
   address_line_1: string | null;
   address_line_2: string | null;
@@ -265,9 +265,9 @@ export type ProjectData = {
   country: string;
   business_unit_id: string | null;
   timezone: timezone | null;
-  language: language;
-  construction_type: constructionType | null;
-  contract_type: contractType | null;
+  LanguageType: LanguageType;
+  construction_type: ConstructionType | null;
+  contract_type: ContractType | null;
   last_sign_in: Date | null;
   created_at: Date;
   updated_at: Date;

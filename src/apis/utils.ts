@@ -1,6 +1,6 @@
 import * as types from "./types";
 
-export const parseFolder = (folder: types.FolderData): types.FolderData => ({
+export const parseFolder = (folder: types.Folder): types.Folder => ({
   ...folder,
   attributes: {
     ...folder.attributes,
@@ -10,7 +10,7 @@ export const parseFolder = (folder: types.FolderData): types.FolderData => ({
   },
 });
 
-export const parseContent = (content: types.ContentData): types.ContentData => {
+export const parseContent = (content: types.ContentType): types.ContentType => {
   if (content.type === "folders") {
     return parseFolder(content);
   }
@@ -37,7 +37,7 @@ export const parseContent = (content: types.ContentData): types.ContentData => {
   return content;
 };
 
-export const parseIssueData = (issue: types.IssueData): types.IssueData => ({
+export const parseIssue = (issue: types.Issue): types.Issue => ({
   ...issue,
   attributes: {
     ...issue.attributes,

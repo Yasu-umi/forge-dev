@@ -15,10 +15,10 @@ export type Response = {
       href: string;
     };
   };
-  data: types.FolderData;
+  data: types.Folder;
 };
 
-export const fetch = async (accessToken: string, { projectID, folderID }: { projectID: string; folderID: string }): Promise<types.FolderData> => {
+export const fetch = async (accessToken: string, { projectID, folderID }: { projectID: string; folderID: string }): Promise<types.Folder> => {
   const { fetch } = fetchPonyfill();
   const res = await fetch(url({ projectID, folderID }), {
     method: "GET",
@@ -29,6 +29,6 @@ export const fetch = async (accessToken: string, { projectID, folderID }: { proj
   });
   const body: Response = await res.json();
   const data = utils.parseFolder(body.data);
-  assertType<types.FolderData>(data);
+  assertType<types.Folder>(data);
   return data;
 };

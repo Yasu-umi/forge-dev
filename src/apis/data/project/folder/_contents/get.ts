@@ -24,11 +24,11 @@ export type Response = {
       href: string;
     };
   };
-  data: types.ContentData[];
-  included?: types.ContentIncludedData[];
+  data: types.ContentType[];
+  included?: types.ContentIncluded[];
 };
 
-export const fetch = async (accessToken: string, { projectID, folderID }: { projectID: string; folderID: string }): Promise<types.ContentData[]> => {
+export const fetch = async (accessToken: string, { projectID, folderID }: { projectID: string; folderID: string }): Promise<types.ContentType[]> => {
   const { fetch } = fetchPonyfill();
   const res = await fetch(url({ projectID, folderID }), {
     method: "GET",
@@ -41,7 +41,7 @@ export const fetch = async (accessToken: string, { projectID, folderID }: { proj
   const data = body.data.map((d) => utils.parseContent(d));
   for (const d of data) {
     try {
-      assertType<types.ContentData>(d);
+      assertType<types.ContentType>(d);
     } catch (e) {
       console.log(JSON.stringify(d, null, 2));
       console.error(e);

@@ -1,6 +1,6 @@
 import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState, useCallback } from "react";
-import { HubData, ProjectData } from "../../../../../apis/types";
+import { Hub, Project } from "../../../../../apis/types";
 import { urls } from "../../../../../lib";
 import * as fetch from "../../../../fetch";
 import { AttributesNameSelector } from "../../../selectors/attributes-name-selector";
@@ -11,9 +11,9 @@ export const apiURL = urls.api.project.hub.projects.get({ hubID: ":hubID" });
 export const docURL = "https://forge.autodesk.com/en/docs/data/v2/reference/http/hubs-hub_id-projects-GET/";
 
 export const ViwerComponent: React.FC = () => {
-  const [hubs, setHubs] = useState<HubData[]>([]);
+  const [hubs, setHubs] = useState<Hub[]>([]);
   const [hubID, setHubID] = useState<string | undefined>(undefined);
-  const [projects, setProjects] = useState<ProjectData[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
 
   const updateHubID = useCallback((hubID: string) => {
     (async () => {

@@ -1,4 +1,4 @@
-export type HubData = {
+export type Hub = {
   type: "hubs";
   id: string;
   attributes: {
@@ -21,7 +21,7 @@ export type HubData = {
   };
 };
 
-export type ProjectData = {
+export type Project = {
   type: "projects";
   id: string;
   attributes: {
@@ -109,7 +109,7 @@ export type ProjectData = {
   };
 };
 
-export type dataType =
+export type DataType =
   | "folders"
   | "folders:autodesk.bim360:Folder"
   | "items:autodesk.bim360:File"
@@ -117,7 +117,7 @@ export type dataType =
   | "items:autodesk.bim360:TitleBlock"
   | "items:autodesk.bim360:ReviewDocument";
 
-type FolderType = {
+export type Folder = {
   type: "folders";
   id: string;
   attributes: {
@@ -139,9 +139,9 @@ type FolderType = {
         href: "https://developer.api.autodesk.com/schema/v1/versions/folders:autodesk.bim360:Folder-1.0";
       };
       data: {
-        allowedTypes: dataType[];
-        visibleTypes: dataType[];
-        actions: actionType[];
+        allowedTypes: DataType[];
+        visibleTypes: DataType[];
+        actions: ActionType[];
       };
     };
   };
@@ -189,7 +189,7 @@ type FolderType = {
   };
 };
 
-type VersionType = {
+export type Version = {
   type: "versions";
   id: string;
   attributes: {
@@ -285,7 +285,7 @@ type VersionType = {
   };
 };
 
-type ItemType = {
+export type Item = {
   type: "items";
   id: string;
   attributes: {
@@ -370,15 +370,11 @@ type ItemType = {
   };
 };
 
-export type TopFolderData = FolderType;
+export type ActionType = "CONVERT" | "SPLIT" | "OCR";
 
-export type FolderData = FolderType;
+export type ContentType = Folder | Version | Item;
 
-export type actionType = "CONVERT" | "SPLIT" | "OCR";
-
-export type ContentData = FolderType | VersionType | ItemType;
-
-export type ContentIncludedData = {
+export type ContentIncluded = {
   type: "versions";
   id: string;
   attributes: {
@@ -455,13 +451,13 @@ export type ContentIncludedData = {
   };
 };
 
-export type statusType = "work_completed" | "ready_to_inspect" | "not_approved" | "in_dispute" | "closed" | "void" | "answered";
+export type StatusType = "work_completed" | "ready_to_inspect" | "not_approved" | "in_dispute" | "closed" | "void" | "answered";
 
-export type assignedToType = "user" | "company" | "role";
+export type AssignedToType = "user" | "company" | "role";
 
-export type issueStatus = "draft" | "open" | "close";
+export type IssueStatusType = "draft" | "open" | "close";
 
-export type attributeType =
+export type AttributeType =
   | "assigned_to"
   | "assigned_to_type"
   | "description"
@@ -490,7 +486,7 @@ export type attributeType =
   | "custom_attributes"
   | "ng_issue_subtype_id";
 
-export type pushpinAttibutesType = {
+export type PushpinAttibutesType = {
   type: "TwoDVectorPushpin";
   location: {
     x: number;
@@ -552,7 +548,7 @@ export type pushpinAttibutesType = {
   attributes_version: 1;
 };
 
-export type IssueData = {
+export type Issue = {
   id: string;
   type: "quality_issues";
   links: { self: string };
@@ -576,13 +572,13 @@ export type IssueData = {
     collection_urn: null;
     due_date: Date;
     identifier: number;
-    status: issueStatus;
+    status: IssueStatusType;
     assigned_to: string | null;
-    assigned_to_type: assignedToType | null;
+    assigned_to_type: AssignedToType | null;
     answer: string | null;
     answered_at: Date | null;
     answered_by: string | null;
-    pushpin_attributes: pushpinAttibutesType | null;
+    pushpin_attributes: PushpinAttibutesType | null;
     owner: string;
     issue_type_id: string | null;
     issue_type: "4" | null;
@@ -590,8 +586,8 @@ export type IssueData = {
     root_cause_id: string | null;
     root_cause: "COORDINATION" | "DESIGN_CHANGE" | null;
     quality_urns: null;
-    permitted_statuses: statusType[];
-    permitted_attributes: attributeType[];
+    permitted_statuses: StatusType[];
+    permitted_attributes: AttributeType[];
     comment_count: number;
     attachment_count: number;
     permitted_actions: ("add_comment" | "add_attachment")[];

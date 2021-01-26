@@ -2,7 +2,7 @@ import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import React from "react";
-import { HubData } from "../../../apis/types";
+import { Hub } from "../../../apis/types";
 import { useStyles } from "./style";
 
 export const HubSelector = ({
@@ -10,7 +10,7 @@ export const HubSelector = ({
   hubID,
   onChangeHubID,
 }: {
-  hubs: HubData[];
+  hubs: Hub[];
   hubID: string | undefined;
   onChangeHubID: (ev: React.ChangeEvent<{ value: unknown }>) => void;
 }) => {

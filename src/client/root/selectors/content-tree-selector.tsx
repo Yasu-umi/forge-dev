@@ -1,10 +1,10 @@
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import React from "react";
-import { ContentData } from "../../../apis/types";
+import { ContentType } from "../../../apis/types";
 import { Selector } from "./selector";
 
-export type ContentTree = { content?: ContentData; children: ContentTree[]; selectedID?: string };
+export type ContentTree = { content?: ContentType; children: ContentTree[]; selectedID?: string };
 
 export const findSelected = (tree: ContentTree, id?: string): ContentTree | undefined => {
   if (id) {
