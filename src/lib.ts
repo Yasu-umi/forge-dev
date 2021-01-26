@@ -60,5 +60,12 @@ export const urls = {
         get: "/api/oss/buckets",
       },
     },
+    modelderivative: {
+      designdata: {
+        metadata: {
+          get: ({ urn }: { urn: string }) => `/api/modelderivative/designdata/${urn}/metadata`,
+        },
+      },
+    },
   },
 };

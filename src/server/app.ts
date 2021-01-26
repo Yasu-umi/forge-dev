@@ -252,4 +252,16 @@ app.get(
   }),
 );
 
+app.get(
+  urls.api.modelderivative.designdata.metadata.get({ urn: ":urn" }),
+  tryWrapper(async (req, res) => {
+    const urn = req.params["urn"];
+    if (!urn) throw new Error("NotFoundURN");
+    const accessToken = await accessTokenPool.get(req.sessionID);
+    if (!accessToken) throw new Error("NotFoundAccessToken");
+    const metadata = await apis.modelderivative.dssigndata.metadata.get.fetch(accessToken.access_token, { urn });
+    return res.send({ data: metadata });
+  }),
+);
+
 app.listen(env.PORT, () => console.log(`Server listening on port ${env.PORT}`));
