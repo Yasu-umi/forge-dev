@@ -1,5 +1,6 @@
 import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState, useCallback } from "react";
+import { useParams, useHistory } from "react-router-dom";
 import * as apis from "../../../../../apis";
 import { Project } from "../../../../../apis/hq/types";
 import { Hub } from "../../../../../apis/types";
@@ -12,64 +13,66 @@ import { Viewer } from "../../viewer";
 
 export const apiURL = urls.api.hq.account.project.get({ accountID: ":accountID", projectID: ":projectID " });
 export const docURL = "https://forge.autodesk.com/en/docs/bim360/v1/reference/http/projects-:project_id-GET/";
+export const path = urls.views.apis.hq.account.project.get({ accountID: ":accountID", projectID: ":projectID" });
 
 export const ViwerComponent: React.FC = () => {
+  const params = useParams<{ accountID?: string; projectID?: string }>();
+  const history = useHistory();
+  const accountID = !params.accountID || params.accountID !== ":accountID" ? params.accountID : undefined;
+  const projectID = !params.projectID || params.projectID !== ":projectID" ? params.projectID : undefined;
+
   const [hubs, setHubs] = useState<Hub[]>([]);
-  const [hubID, setHubID] = useState<string | undefined>(undefined);
   const [projects, setProjects] = useState<Project[]>([]);
   const [project, setProject] = useState<Project | undefined>(undefined);
-  const [projectID, setProjectID] = useState<string | undefined>(undefined);
 
-  const updateProjectID = useCallback(
-    (projectID: string) => {
-      (async () => {
-        setProjectID(projectID);
-        if (!hubID) return;
-        const accountID = apis.hq.utils.getAccountID(hubID);
-        const project = await fetch.hq.account.project.get({ accountID, projectID });
-        setProject(project);
-      })();
-    },
-    [hubID],
-  );
-
-  const updateHubID = useCallback(
+  const onChangeHubID = useCallback(
     (hubID: string) => {
-      (async () => {
-        setHubID(hubID);
-        const accountID = apis.hq.utils.getAccountID(hubID);
-        const projects = await fetch.hq.account.projects.get({ accountID });
-        setProjects(projects);
-        if (projects.length === 0) return;
-        updateProjectID(projects[0].id);
-      })();
+      const accountID = apis.hq.utils.getAccountID(hubID);
+      history.push(urls.views.apis.hq.account.project.get({ accountID, projectID }));
     },
-    [updateProjectID],
+    [history, projectID],
+  );
+  const onChangeProjectID = useCallback(
+    (projectID: string) => {
+      history.push(urls.views.apis.hq.account.project.get({ accountID, projectID }));
+    },
+    [history, accountID],
   );
 
-  const onChangeProjectID = useCallback(
-    (ev: React.ChangeEvent<{ value: unknown }>) => {
-      const projectID = ev.currentTarget.value;
-      if (typeof projectID !== "string") return;
-      updateProjectID(projectID);
-    },
-    [updateProjectID],
-  );
+  useEffect(() => {
+    (async () => {
+      if (!accountID || !projectID) return;
+      const project = await fetch.hq.account.project.get({ accountID, projectID });
+      setProject(project);
+      onChangeProjectID(projectID);
+    })();
+  }, [accountID, projectID, onChangeProjectID]);
+
+  useEffect(() => {
+    (async () => {
+      if (!accountID) return;
+      const projects = await fetch.hq.account.projects.get({ accountID });
+      setProjects(projects);
+      onChangeHubID(apis.hq.utils.getHubID(accountID));
+    })();
+  }, [accountID, onChangeHubID]);
 
   useEffect(() => {
     (async () => {
       const hubs = await fetch.project.hubs.get();
       setHubs(hubs);
-      if (hubs.length === 0) return;
-      updateHubID(hubs[0].id);
     })();
-  }, [updateHubID]);
+  }, []);
 
   return (
     <Viewer data={project} apiURL={apiURL} docURL={docURL}>
       <div>
         <Typography>Hub</Typography>
-        <AttributesNameSelector objectID={hubID} onChangeObjectID={updateHubID} objects={hubs} />
+        <AttributesNameSelector
+          objectID={accountID ? apis.hq.utils.getHubID(accountID) : undefined}
+          onChangeObjectID={onChangeHubID}
+          objects={hubs}
+        />
       </div>
       <div>
         <Typography>Project</Typography>
@@ -82,5 +85,6 @@ export const ViwerComponent: React.FC = () => {
 export const nodeElement: NodeElement = {
   apiURL,
   docURL,
+  path,
   Viewer: ViwerComponent,
 };

@@ -4,6 +4,7 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import React from "react";
+import { urls } from "../../lib";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -33,7 +34,7 @@ export const App = () => {
           forge-dev login
         </Typography>
         <div className={styles.buttonWrapper}>
-          <Button variant="contained" color="primary" size="large" href={"/login"}>
+          <Button variant="contained" color="primary" size="large" href={urls.login.get}>
             LOGIN
           </Button>
         </div>

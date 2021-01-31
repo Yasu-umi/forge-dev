@@ -57,3 +57,5 @@ export const parseIssue = (issue: types.Issue): types.Issue => ({
       : null,
   },
 });
+
+export const getIssueContainerID = (project: types.Project) => project?.relationships.issues.data.id;

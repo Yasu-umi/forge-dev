@@ -17,6 +17,12 @@ export const fetch = async (accessToken: string, { accountID }: { accountID: str
     },
   });
   const body: Response = await res.json();
+  try {
+    assertType<unknown[]>(body);
+  } catch (e) {
+    console.log(JSON.stringify(body, null, 2));
+    throw e;
+  }
   const data = body.map(utils.parseProject);
   try {
     assertType<types.Project[]>(data);

@@ -1,4 +1,5 @@
-import { urls } from "../.././../lib";
+import React, { useMemo } from "react";
+import { Route, Switch } from "react-router-dom";
 import * as data from "./data";
 import * as hq from "./hq";
 import * as issues from "./issues";
@@ -11,8 +12,8 @@ export const tree: Node = {
     children: {
       hubs: project.hubs.nodeElement,
       hub: {
-        apiURL: urls.api.project.hub.get({ hubID: ":hubID" }),
-        docURL: "https://forge.autodesk.com/en/docs/data/v2/reference/http/hubs-hub_id-GET/",
+        // apiURL: urls.api.project.hub.get({ hubID: ":hubID" }),
+        // docURL: "https://forge.autodesk.com/en/docs/data/v2/reference/http/hubs-hub_id-GET/",
         children: {
           projects: project.hub.projects.nodeElement,
           project: {
@@ -29,8 +30,8 @@ export const tree: Node = {
       project: {
         children: {
           folder: {
-            apiURL: urls.api.data.project.folder.get({ projectID: ":projectID", folderID: ":folderID" }),
-            docURL: "https://forge.autodesk.com/en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-GET/",
+            // apiURL: urls.api.data.project.folder.get({ projectID: ":projectID", folderID: ":folderID" }),
+            // docURL: "https://forge.autodesk.com/en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-GET/",
             children: {
               contents: data.project.folder.contents.nodeElement,
             },
@@ -64,3 +65,18 @@ export const tree: Node = {
     },
   },
 };
+
+const renderTree = (node: Node): JSX.Element[] =>
+  Object.values(node)
+    .map((value) => [
+      "path" in value ? (
+        <Route path={value.path} key={value.path}>
+          <value.Viewer />
+        </Route>
+      ) : null,
+      ...("children" in value && value.children ? renderTree(value.children) : []),
+    ])
+    .reduce((prev, cur) => [...prev, ...cur], [])
+    .filter((el): el is JSX.Element => !!el);
+
+export const Root = () => <Switch>{...useMemo(() => renderTree(tree), [])}</Switch>;

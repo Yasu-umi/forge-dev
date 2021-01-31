@@ -7,6 +7,7 @@ import { Viewer } from "../viewer";
 
 export const apiURL = urls.api.project.hubs.get;
 export const docURL = "https://forge.autodesk.com/en/docs/data/v2/reference/http/hubs-GET/";
+export const path = urls.views.apis.project.hubs.get;
 
 export const ViwerComponent: React.FC = () => {
   const [hubs, setHubs] = useState<Hub[]>([]);
@@ -21,5 +22,6 @@ export const ViwerComponent: React.FC = () => {
 export const nodeElement: NodeElement = {
   apiURL,
   docURL,
+  path,
   Viewer: ViwerComponent,
 };

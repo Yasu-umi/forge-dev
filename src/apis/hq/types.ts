@@ -265,7 +265,7 @@ export type Project = {
   country: string;
   business_unit_id: string | null;
   timezone: timezone | null;
-  LanguageType: LanguageType;
+  Language?: LanguageType;
   construction_type: ConstructionType | null;
   contract_type: ContractType | null;
   last_sign_in: Date | null;

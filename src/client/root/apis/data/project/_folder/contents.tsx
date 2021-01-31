@@ -1,7 +1,9 @@
 import Typography from "@material-ui/core/Typography";
-import React, { useEffect, useState, useCallback } from "react";
+import queryString from "query-string";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
+import { useLocation, useParams, useHistory } from "react-router-dom";
 import { Hub, Project } from "../../../../../../apis/types";
-import { urls } from "../../../../../../lib";
+import { urls, PathParam } from "../../../../../../lib";
 import * as fetch from "../../../../../fetch";
 import { AttributesNameSelector } from "../../../../selectors/attributes-name-selector";
 import { ContentTreeSelector, ContentTree, findSelected, findParent } from "../../../../selectors/content-tree-selector";
@@ -10,13 +12,48 @@ import { Viewer } from "../../../viewer";
 
 export const apiURL = urls.api.data.project.folder.contents.get({ projectID: ":projectID", folderID: ":folderID" });
 export const docURL = "https://forge.autodesk.com/en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-contents-GET/";
+export const path = urls.views.apis.data.project.folder.contents.get({ projectID: ":projectID", folderID: ":folderID" });
+
+const buildURL = ({ hubID, projectID, folderID }: { hubID: PathParam; projectID: PathParam; folderID: PathParam }) =>
+  `${urls.views.apis.data.project.folder.contents.get({
+    projectID: projectID || ":projectID",
+    folderID: folderID || ":folderID",
+  })}?${queryString.stringify({ hubID: hubID || ":hubID" })}`;
 
 export const ViwerComponent: React.FC = () => {
+  const location = useLocation();
+  const hubID = useMemo(() => {
+    const query = queryString.parse(location.search);
+    return typeof query["hubID"] === "string" ? query["hubID"] : undefined;
+  }, [location.search]);
+
+  const params = useParams<{ projectID?: string; folderID?: string }>();
+  const history = useHistory();
+  const projectID = !params.projectID || params.projectID !== ":projectID" ? params.projectID : undefined;
+  const folderID = !params.folderID || params.folderID !== ":folderID" ? params.folderID : undefined;
+
   const [hubs, setHubs] = useState<Hub[]>([]);
-  const [hubID, setHubID] = useState<string | undefined>(undefined);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [projectID, setProjectID] = useState<string | undefined>(undefined);
   const [contentTree, setContentTree] = useState<ContentTree>({ children: [] });
+
+  const onChangeHubID = useCallback(
+    (hubID: string) => {
+      history.push(buildURL({ hubID, projectID, folderID }));
+    },
+    [history, projectID, folderID],
+  );
+  const onChangeProjectID = useCallback(
+    (projectID: string) => {
+      history.push(buildURL({ hubID, projectID, folderID }));
+    },
+    [history, hubID, folderID],
+  );
+  const onChangeFolderID = useCallback(
+    (folderID: string) => {
+      history.push(buildURL({ hubID, projectID, folderID }));
+    },
+    [history, hubID, projectID],
+  );
 
   const onSelect = useCallback(
     (projectID: string, contentTree: ContentTree, id: string) => {
@@ -33,9 +70,10 @@ export const ViwerComponent: React.FC = () => {
         parent.children[idx] = { ...selected };
         parent.children = [...parent.children];
         setContentTree({ ...contentTree });
+        onChangeFolderID(id);
       })();
     },
-    [setContentTree],
+    [setContentTree, onChangeFolderID],
   );
 
   const onSelectID = useCallback(
@@ -44,64 +82,46 @@ export const ViwerComponent: React.FC = () => {
     },
     [projectID, contentTree, onSelect],
   );
-  const onDeleteID = (id: string) => {
-    const selected = findSelected(contentTree, id);
-    if (!selected) return;
-    delete selected?.selectedID;
-    const parent = findParent(selected, id);
-    const idx = parent ? parent.children.findIndex((child) => child?.content?.id === id) : undefined;
-    if (parent && idx) {
-      parent.children[idx] = { ...parent.children[idx] };
-      parent.children = [...parent.children];
-    }
-    setContentTree({ ...contentTree });
-  };
-
-  const updateProjectID = useCallback(
-    (hubID: string, projectID: string) => {
-      (async () => {
-        setProjectID(projectID);
-        const topFolders = await fetch.project.hub.project.topFolders.get({ hubID, projectID });
-        const contentTree: ContentTree = { children: topFolders.map((content) => ({ content, children: [] })) };
-        if (contentTree.children.length > 0) {
-          const id = contentTree.children[0].content?.id;
-          if (id) onSelect(projectID, contentTree, id);
-        }
-        setContentTree(contentTree);
-      })();
+  const onDeleteID = React.useCallback(
+    (id: string) => {
+      const selected = findSelected(contentTree, id);
+      if (!selected) return;
+      delete selected?.selectedID;
+      const parent = findParent(selected, id);
+      const idx = parent ? parent.children.findIndex((child) => child?.content?.id === id) : undefined;
+      if (parent && idx) {
+        parent.children[idx] = { ...parent.children[idx] };
+        parent.children = [...parent.children];
+      }
+      setContentTree({ ...contentTree });
+      onChangeFolderID(id);
     },
-    [onSelect],
+    [contentTree, onChangeFolderID],
   );
 
-  const updateHubID = useCallback(
-    (hubID: string) => {
-      (async () => {
-        setHubID(hubID);
-        const projects = await fetch.project.hub.projects.get({ hubID });
-        setProjects(projects);
-        if (projects.length === 0) return;
-        updateProjectID(hubID, projects[0].id);
-      })();
-    },
-    [updateProjectID],
-  );
+  useEffect(() => {
+    (async () => {
+      if (!hubID || !projectID) return;
+      const topFolders = await fetch.project.hub.project.topFolders.get({ hubID, projectID });
+      const contentTree: ContentTree = { children: topFolders.map((content) => ({ content, children: [] })) };
+      setContentTree(contentTree);
+    })();
+  }, [hubID, projectID]);
 
-  const onChangeProjectID = useCallback(
-    (projectID: string) => {
-      if (typeof hubID !== "string") return;
-      updateProjectID(hubID, projectID);
-    },
-    [updateProjectID, hubID],
-  );
+  useEffect(() => {
+    (async () => {
+      if (!hubID) return;
+      const projects = await fetch.project.hub.projects.get({ hubID });
+      setProjects(projects);
+    })();
+  }, [hubID]);
 
   useEffect(() => {
     (async () => {
       const hubs = await fetch.project.hubs.get();
       setHubs(hubs);
-      if (hubs.length === 0) return;
-      updateHubID(hubs[0].id);
     })();
-  }, [updateHubID]);
+  }, []);
 
   const selected = findSelected(contentTree);
   const data = selected ? selected.children.map(({ content }) => content) : [];
@@ -110,7 +130,7 @@ export const ViwerComponent: React.FC = () => {
     <Viewer data={data} apiURL={apiURL} docURL={docURL}>
       <div>
         <Typography>Hub</Typography>
-        <AttributesNameSelector objectID={hubID} onChangeObjectID={updateHubID} objects={hubs} />
+        <AttributesNameSelector objectID={hubID} onChangeObjectID={onChangeHubID} objects={hubs} />
       </div>
       <div>
         <Typography>Project</Typography>
@@ -127,5 +147,6 @@ export const ViwerComponent: React.FC = () => {
 export const nodeElement: NodeElement = {
   apiURL,
   docURL,
+  path,
   Viewer: ViwerComponent,
 };

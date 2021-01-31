@@ -1,6 +1,7 @@
 import { Project } from "./types";
 
 export const getAccountID = (hubID: string) => hubID.replace(/^b./, "");
+export const getHubID = (accountID: string) => `b.${accountID}`;
 
 export const parseProject = (project: Project): Project => ({
   ...project,

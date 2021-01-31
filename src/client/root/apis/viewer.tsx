@@ -30,7 +30,7 @@ export const Viewer = ({ data, apiURL, docURL, children }: { data: unknown; apiU
       </div>
       <div className={styles.content}>
         <Typography>API Path</Typography>
-        <Link href="#">
+        <Link>
           <Typography>{apiURL}</Typography>
         </Link>
       </div>

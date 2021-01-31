@@ -7,6 +7,7 @@ import { Viewer } from "../viewer";
 
 export const apiURL = urls.api.oss.buckets.get;
 export const docURL = "https://forge.autodesk.com/en/docs/bim360/v1/reference/http/projects-:project_id-GET/";
+export const path = urls.views.apis.oss.buckets.get;
 
 export const ViwerComponent: React.FC = () => {
   const [buckets, setBuckets] = useState<Bucket[]>([]);
@@ -21,5 +22,6 @@ export const ViwerComponent: React.FC = () => {
 export const nodeElement: NodeElement = {
   apiURL,
   docURL,
+  path,
   Viewer: ViwerComponent,
 };

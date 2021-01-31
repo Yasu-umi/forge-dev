@@ -9,38 +9,45 @@ import Toolbar from "@material-ui/core/Toolbar";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
-import React from "react";
+import React, { useMemo } from "react";
+import { NavLink } from "react-router-dom";
 import { tree } from "./apis/root";
-import { Node, NodeElement } from "./apis/types";
+import { Node } from "./apis/types";
 
-const NodeList = ({ node, nested, setNodeElement }: { node: Node; nested: number; setNodeElement: (value: NodeElement) => void }) => {
+const APIsNodeList = ({ node, nested }: { node: Node; nested: number }) => {
   const theme = useTheme();
 
   const [openedList, setOpenedList] = React.useState<boolean[]>(Object.keys(node).map(() => false));
 
   const onClick = React.useCallback(
-    (i: number, value: NodeElement) => {
+    (i: number) => {
       openedList[i] = !openedList[i];
       setOpenedList([...openedList]);
-      if ("apiURL" in value) {
-        setNodeElement(value);
-      }
     },
-    [openedList, setNodeElement],
+    [openedList],
   );
+
+  const style = useMemo(() => ({ paddingLeft: (nested + 1) * theme.spacing(2) }), [nested, theme]);
 
   return (
     <>
       {Object.entries(node).map(([key, value], i) => {
         return (
           <List key={key} component="div" disablePadding={nested !== 0}>
-            <ListItem button style={{ paddingLeft: (nested + 1) * theme.spacing(1) }} onClick={() => onClick(i, value)}>
-              <ListItemText primary={key} />
-              {value.children ? openedList[i] ? <ExpandLess /> : <ExpandMore /> : null}
-            </ListItem>
+            {"path" in value ? (
+              <ListItem button component={NavLink} to={value.path} exact={true} style={style} onClick={() => onClick(i)}>
+                <ListItemText primary={key} />
+                {value.children ? openedList[i] ? <ExpandLess /> : <ExpandMore /> : null}
+              </ListItem>
+            ) : (
+              <ListItem style={style} onClick={() => onClick(i)}>
+                <ListItemText primary={key} />
+                {value.children ? openedList[i] ? <ExpandLess /> : <ExpandMore /> : null}
+              </ListItem>
+            )}
             {value.children ? (
               <Collapse in={openedList[i]} timeout="auto" unmountOnExit>
-                <NodeList node={value.children} nested={nested + 1} setNodeElement={setNodeElement} />
+                <APIsNodeList node={value.children} nested={nested + 1} />
               </Collapse>
             ) : null}
           </List>
@@ -64,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
   list: {},
 }));
 
-export const Sidebar = ({ setNodeElement }: { setNodeElement: (value: NodeElement) => void }) => {
+export const Sidebar = () => {
   const styles = useStyles();
   return (
     <Drawer anchor={"left"} open={true} variant="permanent" className={styles.drawer} classes={{ paper: styles.drawerPaper }}>
@@ -73,7 +80,7 @@ export const Sidebar = ({ setNodeElement }: { setNodeElement: (value: NodeElemen
         <ListSubheader component="div" id="apis">
           APIS
         </ListSubheader>
-        <NodeList node={tree} nested={0} setNodeElement={setNodeElement} />
+        <APIsNodeList node={tree} nested={0} />
         <Divider />
       </List>
     </Drawer>

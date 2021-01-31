@@ -1,9 +1,81 @@
+export type PathParam = string | undefined;
+
 export const urls = {
   login: {
     get: "/login",
   },
   logout: {
     get: "/logout",
+  },
+  views: {
+    login: {
+      get: "/views/login",
+    },
+    apis: {
+      get: "/views/apis",
+      data: {
+        project: {
+          folder: {
+            get: ({ projectID, folderID }: { projectID: PathParam; folderID: PathParam }) =>
+              `/api/data/project/${projectID || ":projectID"}/folder/${folderID || ":folderID"}`,
+            contents: {
+              get: ({ projectID, folderID }: { projectID: PathParam; folderID: PathParam }) =>
+                `/views/apis/data/project/${projectID || ":projectID"}/folders/${folderID || ":folderID"}/contents`,
+            },
+          },
+        },
+      },
+      hq: {
+        account: {
+          projects: {
+            get: ({ accountID }: { accountID: PathParam }) => `/views/apis/hq/account/${accountID || ":accountID"}/projects`,
+          },
+          project: {
+            get: ({ accountID, projectID }: { accountID: PathParam; projectID: PathParam }) =>
+              `/views/apis/hq/account/${accountID || ":accountID"}/project/${projectID || ":projectID"}`,
+          },
+        },
+      },
+      issues: {
+        container: {
+          qualityIssues: {
+            get: ({ issueContainerID }: { issueContainerID: PathParam }) =>
+              `/views/apis/issues/container/${issueContainerID || ":issueContainerID"}/quality-issues`,
+          },
+        },
+      },
+      project: {
+        hubs: {
+          get: "/views/apis/project/hubs",
+        },
+        hub: {
+          get: ({ hubID }: { hubID: PathParam }) => `/views/apis/project/hub/${hubID || ":hubID"}`,
+          projects: {
+            get: ({ hubID }: { hubID: PathParam }) => `/views/apis/project/hub/${hubID || ":hubID"}/projects`,
+          },
+          project: {
+            get: ({ hubID, projectID }: { hubID: PathParam; projectID: PathParam }) =>
+              `/views/apis/project/hub/${hubID || ":hubID"}/project/${projectID || ":projectID"}`,
+            topFolders: {
+              get: ({ hubID, projectID }: { hubID: PathParam; projectID: PathParam }) =>
+                `/views/apis/project/hub/${hubID || ":hubID"}/project/${projectID || ":projectID"}/topFolders`,
+            },
+          },
+        },
+      },
+      oss: {
+        buckets: {
+          get: "/views/apis/oss/buckets",
+        },
+      },
+      modelderivative: {
+        designdata: {
+          metadata: {
+            get: ({ urn }: { urn: PathParam }) => `/views/apis/modelderivative/designdata/${urn || ":urn"}/metadata`,
+          },
+        },
+      },
+    },
   },
   api: {
     oauth: {
@@ -14,9 +86,11 @@ export const urls = {
     data: {
       project: {
         folder: {
-          get: ({ projectID, folderID }: { projectID: string; folderID: string }) => `/api/data/project/${projectID}/folders/${folderID}`,
+          get: ({ projectID, folderID }: { projectID: PathParam; folderID: PathParam }) =>
+            `/api/data/project/${projectID || ":projectID"}/folder/${folderID || ":folderID"}`,
           contents: {
-            get: ({ projectID, folderID }: { projectID: string; folderID: string }) => `/api/data/project/${projectID}/folders/${folderID}/contents`,
+            get: ({ projectID, folderID }: { projectID: PathParam; folderID: PathParam }) =>
+              `/api/data/project/${projectID || ":projectID"}/folder/${folderID || ":folderID"}/contents`,
           },
         },
       },
@@ -24,17 +98,19 @@ export const urls = {
     hq: {
       account: {
         projects: {
-          get: ({ accountID }: { accountID: string }) => `/api/hq/account/${accountID}/projects`,
+          get: ({ accountID }: { accountID: PathParam }) => `/api/hq/account/${accountID}/projects`,
         },
         project: {
-          get: ({ accountID, projectID }: { accountID: string; projectID: string }) => `/api/hq/account/${accountID}/project/${projectID}`,
+          get: ({ accountID, projectID }: { accountID: PathParam; projectID: PathParam }) =>
+            `/api/hq/account/${accountID || ":accountID"}/project/${projectID || ":projectID"}`,
         },
       },
     },
     issues: {
       container: {
         qualityIssues: {
-          get: ({ issueContainerID }: { issueContainerID: string }) => `/api/issues/container/${issueContainerID}/quality-issues`,
+          get: ({ issueContainerID }: { issueContainerID: PathParam }) =>
+            `/api/issues/container/${issueContainerID || ":issueContainerID"}/quality-issues`,
         },
       },
     },
@@ -43,14 +119,16 @@ export const urls = {
         get: "/api/project/hubs",
       },
       hub: {
-        get: ({ hubID }: { hubID: string }) => `/api/project/hubs/${hubID}`,
+        get: ({ hubID }: { hubID: PathParam }) => `/api/project/hub/${hubID || ":hubID"}`,
         projects: {
-          get: ({ hubID }: { hubID: string }) => `/api/project/hubs/${hubID}/projects`,
+          get: ({ hubID }: { hubID: PathParam }) => `/api/project/hub/${hubID || ":hubID"}/projects`,
         },
         project: {
-          get: ({ hubID, projectID }: { hubID: string; projectID: string }) => `/api/project/hubs/${hubID}/projects/${projectID}`,
+          get: ({ hubID, projectID }: { hubID: PathParam; projectID: PathParam }) =>
+            `/api/project/hub/${hubID || ":hubID"}/project/${projectID || ":projectID"}`,
           topFolders: {
-            get: ({ hubID, projectID }: { hubID: string; projectID: string }) => `/api/project/hubs/${hubID}/projects/${projectID}/topFolders`,
+            get: ({ hubID, projectID }: { hubID: PathParam; projectID: PathParam }) =>
+              `/api/project/hub/${hubID || ":hubID"}/project/${projectID || ":projectID"}/topFolders`,
           },
         },
       },

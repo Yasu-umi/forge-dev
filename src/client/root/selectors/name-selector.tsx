@@ -1,29 +1,18 @@
-import FormControl from "@material-ui/core/FormControl";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
-import React from "react";
-import { useStyles } from "./style";
+import React, { useCallback } from "react";
+import { Selector } from "./selector";
+
+type AttributesName = { id: string; name: string };
 
 export const NameSelector = ({
   objects,
   objectID,
   onChangeObjectID,
 }: {
-  objects: { id: string; name: string }[];
+  objects: AttributesName[];
   objectID: string | undefined;
-  onChangeObjectID: (ev: React.ChangeEvent<{ value: unknown }>) => void;
+  onChangeObjectID: (id: string) => void;
 }) => {
-  const styles = useStyles();
-  if (objects.length === 0 || !objectID) return null;
-  return (
-    <FormControl classes={{ root: styles.selectorWrapperRoot }}>
-      <Select value={objectID} onChange={onChangeObjectID} classes={{ root: styles.selectorRoot, icon: styles.selectorIcon }}>
-        {objects.map((object) => (
-          <MenuItem key={object.id} value={object.id}>
-            {object.name}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-  );
+  const getID = useCallback((object: AttributesName) => object.id, []);
+  const getName = useCallback((object: AttributesName) => object.name, []);
+  return <Selector objects={objects} objectID={objectID} onChangeObjectID={onChangeObjectID} getID={getID} getName={getName} />;
 };

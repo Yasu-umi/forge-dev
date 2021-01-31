@@ -63,15 +63,18 @@ app.use(
 
 app.use("/healthcheck", (_req, res) => res.sendStatus(200));
 
-app.get("/", async (req, res, next) => {
+app.use("/js", express.static("public/js"));
+
+app.use(urls.views.login.get, express.static("public/login.html"));
+app.get("/views/*", async (req, res, next) => {
   // check logined
   if (await accessTokenPool.get(req.sessionID)) {
     return next();
   } else {
-    return res.redirect("/login.html");
+    return res.redirect(urls.views.login.get);
   }
 });
-app.use("/", express.static("public"));
+app.use("/views/*", express.static("public/index.html"));
 
 app.get(urls.login.get, (_req, res) => {
   const scope = [apis.scopes.data.read, apis.scopes.account.read, apis.scopes.bucket.read].join(" ");
@@ -96,7 +99,7 @@ app.get(
       redirectURI: `${env.HOST}${urls.api.oauth.callback.get}`,
     });
     await accessTokenPool.set(req.sessionID, accessToken);
-    return res.redirect("/");
+    return res.redirect(urls.views.apis.get);
   }),
 );
 
