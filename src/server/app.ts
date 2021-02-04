@@ -66,6 +66,7 @@ app.use("/healthcheck", (_req, res) => res.sendStatus(200));
 app.use("/js", express.static("public/js"));
 
 app.use(urls.views.login.get, express.static("public/login.html"));
+app.get("/", (_, res) => res.redirect(urls.views.login.get));
 app.get("/views/*", async (req, res, next) => {
   // check logined
   if (await accessTokenPool.get(req.sessionID)) {
