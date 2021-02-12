@@ -6,7 +6,7 @@ module.exports = {
   devtool: "inline-source-map",
   entry: {
     test: path.resolve(__dirname, "/src/server/test.ts"),
-    app: path.resolve(__dirname, "/src/server/app.ts"),
+    main: path.resolve(__dirname, "/src/server/main.ts"),
   },
   output: {
     path: path.resolve(__dirname, "dist"),

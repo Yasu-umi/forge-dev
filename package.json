@@ -56,8 +56,8 @@
     "build:watch": "npm-run-all -p build:client:watch build:server:watch",
     "lint": "eslint . --ext .tsx --ext .ts",
     "fmt": "npm run lint -- --fix",
-    "start:server": "node ./dist/app.js",
-    "start:server:watch": "env-cmd -f .dev.env nodemon --watch ./dist/app.js ./dist/app.js",
+    "start:server": "node ./dist/main.js",
+    "start:server:watch": "env-cmd -f .dev.env nodemon --watch ./dist/main.js ./dist/main.js",
     "dev": "npm-run-all -p build:client:watch build:server:watch start:server:watch"
   }
 }

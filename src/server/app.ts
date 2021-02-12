@@ -1,3 +1,4 @@
+import { IncomingMessage } from "http";
 import cookieParser from "cookie-parser";
 import express from "express";
 import session from "express-session";
@@ -44,8 +45,12 @@ const tryWrapper = (handler: express.Handler) => async (req: express.Request, re
   }
 };
 
-const app = express();
-app.use(morgan("short"));
+export const app = express();
+app.use(
+  morgan("short", {
+    skip: (req: IncomingMessage) => (req.url ? req.url === "/" : false),
+  }),
+);
 app.use(cookieParser());
 
 app.use(
@@ -267,5 +272,3 @@ app.get(
     return res.send({ data: metadata });
   }),
 );
-
-app.listen(env.PORT, () => console.log(`Server listening on port ${env.PORT}`));
