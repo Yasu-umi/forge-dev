@@ -53,7 +53,7 @@ class DynamoAccessTokenPool implements AccessTokenPool {
           Item: {
             sessionID,
             accessToken: JSON.stringify(accessToken),
-            ttl: Math.floor(new Date().getTime() / 1000),
+            ttl: Math.floor(new Date().getTime() / 1000 + 60 * 60),
           },
         },
         (err) => {
