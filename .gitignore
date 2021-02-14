@@ -5,3 +5,4 @@ node_modules/
 dist/
 public/js/
 infra/terraform/.terraform
+infra/terraform/entry.zip

@@ -64,23 +64,6 @@ data "aws_iam_policy_document" "codepipeline" {
     resources = ["*"]
   }
 
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "iam:PassRole",
-      "ecr:DescribeImages",
-      "ecs:DescribeServices",
-      "ecs:DescribeTaskDefinition",
-      "ecs:DescribeTasks",
-      "ecs:ListTasks",
-      "ecs:RegisterTaskDefinition",
-      "ecs:UpdateService",
-    ]
-
-    resources = ["*"]
-  }
-
   // TODO: more strict
   statement {
     effect = "Allow"
@@ -158,25 +141,6 @@ resource "aws_codepipeline" "main" {
       }
     }
   }
-
-  stage {
-    name = "Deploy"
-
-    action {
-      name            = "Deploy"
-      category        = "Deploy"
-      owner           = "AWS"
-      provider        = "ECS"
-      input_artifacts = ["build_output"]
-      version         = "1"
-
-      configuration = {
-        ClusterName = aws_ecs_cluster.main.name
-        ServiceName = aws_ecs_service.main.name
-        FileName    = "imagedefinitions.json"
-      }
-    }
-  }
 }
 data "aws_iam_policy_document" "codebuild_sts" {
   statement {
@@ -193,6 +157,10 @@ data "aws_iam_policy_document" "codebuild_sts" {
 resource "aws_iam_role" "codebuild" {
   name               = "${var.app}-${terraform.workspace}-main-codebuild"
   assume_role_policy = data.aws_iam_policy_document.codebuild_sts.json
+}
+resource "aws_cloudwatch_log_group" "codebuild" {
+  name              = "/aws/codebuild/${var.app}-${terraform.workspace}-main"
+  retention_in_days = 7
 }
 
 
@@ -217,30 +185,6 @@ data "aws_iam_policy_document" "codebuild" {
     resources = ["*"]
 
     actions = [
-      "ecr:GetAuthorizationToken",
-      "ecr:GetDownloadUrlForLayer",
-      "ecr:BatchGetImage",
-      "ecr:BatchCheckLayerAvailability",
-    ]
-  }
-
-  statement {
-    effect = "Allow"
-
-    resources = [
-      aws_ecr_repository.main.arn,
-    ]
-
-    actions = [
-      "ecr:*",
-    ]
-  }
-
-  statement {
-    effect    = "Allow"
-    resources = ["*"]
-
-    actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents",
@@ -253,12 +197,34 @@ data "aws_iam_policy_document" "codebuild" {
     effect = "Allow"
 
     resources = [
-      "arn:aws:ssm:ap-northeas-1:${var.account_id}:parameter/${var.app}/${terraform.workspace}/main/*",
+      "arn:aws:ssm:${data.aws_region.self.name}:${data.aws_caller_identity.self.account_id}:parameter/${var.app}/${terraform.workspace}/main/*"
     ]
 
     actions = [
+      "ssm:GetParameter",
       "ssm:GetParameters",
-      "secretsmanager:GetSecretValue",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    resources = [
+      aws_kms_key.main.arn,
+    ]
+
+    actions = [
+      "kms:Decrypt",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    resources = [
+      aws_lambda_function.main.arn,
+    ]
+    actions = [
+      "lambda:UpdateFunctionCode",
     ]
   }
 }
@@ -273,6 +239,12 @@ resource "aws_codebuild_project" "main" {
   name          = "${var.app}-${terraform.workspace}-main"
   service_role  = aws_iam_role.codebuild.arn
   build_timeout = 30
+
+  logs_config {
+    cloudwatch_logs {
+      group_name = aws_cloudwatch_log_group.codebuild.name
+    }
+  }
 
   source {
     type      = "CODEPIPELINE"
@@ -296,22 +268,35 @@ resource "aws_codebuild_project" "main" {
 
     environment_variable {
       name  = "AWS_REGION"
-      value = "ap-northeast-1"
+      value = data.aws_region.self.name
     }
 
     environment_variable {
-      name  = "REPOSITORY_URI"
-      value = aws_ecr_repository.main.repository_url
+      name  = "FUNCTION_NAME"
+      value = aws_lambda_function.main.function_name
     }
 
     environment_variable {
-      name  = "CONTAINER_NAME"
-      value = "main"
+      name  = "CLIENT_ID"
+      type  = "PARAMETER_STORE"
+      value = aws_ssm_parameter.client_id.name
+    }
+
+    environment_variable {
+      name  = "CLIENT_SECRET"
+      type  = "PARAMETER_STORE"
+      value = aws_ssm_parameter.client_secret.name
+    }
+
+    environment_variable {
+      name  = "BIM360_ACCOUNT_ID"
+      type  = "PARAMETER_STORE"
+      value = aws_ssm_parameter.bim360_account_id.name
     }
 
     environment_variable {
       name  = "HOST"
-      value = "http://${aws_alb.main.dns_name}"
+      value = aws_apigatewayv2_stage.main.invoke_url
     }
   }
 }
