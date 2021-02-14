@@ -5,12 +5,14 @@ module.exports = {
   target: "node",
   devtool: "inline-source-map",
   entry: {
-    test: path.resolve(__dirname, "/src/server/test.ts"),
     main: path.resolve(__dirname, "/src/server/main.ts"),
+    lambda: path.resolve(__dirname, "/src/server/lambda.ts"),
   },
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "[name].js"
+    filename: "[name].js",
+    library: "handler",
+    libraryTarget: "umd"
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js"],

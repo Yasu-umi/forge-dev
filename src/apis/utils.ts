@@ -59,3 +59,11 @@ export const parseIssue = (issue: types.Issue): types.Issue => ({
 });
 
 export const getIssueContainerID = (project: types.Project) => project?.relationships.issues.data.id;
+
+export const base64Encode = (val: string) =>
+  (globalThis.btoa ? globalThis.btoa(val) : Buffer.from(val, "utf8").toString("base64")).replace("+", "-").replace("/", "_").replace("=", "");
+
+export const base64Decode = (val: string) =>
+  globalThis.atob
+    ? globalThis.atob(val.replace("-", "+").replace("_", "/"))
+    : Buffer.from(val.replace("-", "+").replace("_", "/"), "base64").toString("ascii");

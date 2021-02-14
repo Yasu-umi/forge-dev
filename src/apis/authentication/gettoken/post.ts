@@ -11,13 +11,13 @@ export const url = "https://developer.api.autodesk.com/authentication/v1/gettoke
 
 export const fetch = async ({
   code,
-  CLIENT_ID,
-  CLIENT_SECRET,
+  clientID,
+  clientSecret,
   redirectURI,
 }: {
   code: string;
-  CLIENT_ID: string;
-  CLIENT_SECRET: string;
+  clientID: string;
+  clientSecret: string;
   redirectURI: string;
 }): Promise<Response> => {
   const { fetch } = fetchPonyfill();
@@ -26,7 +26,7 @@ export const fetch = async ({
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: `grant_type=authorization_code&code=${code}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&redirect_uri=${redirectURI}`,
+    body: `grant_type=authorization_code&code=${code}&client_id=${clientID}&client_secret=${clientSecret}&redirect_uri=${redirectURI}`,
   });
   return await res.json();
 };

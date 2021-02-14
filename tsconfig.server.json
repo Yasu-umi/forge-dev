@@ -1,8 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "plugins": [
-      { "transform": "typescript-is/lib/transform-inline/transformer" }
-    ]
-  }
+    "plugins": [{ "transform": "typescript-is/lib/transform-inline/transformer" }]
+  },
+  "exclude": ["src/client/**/*"]
 }

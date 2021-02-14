@@ -10,7 +10,7 @@ export type Response = {
 export const url = "https://developer.api.autodesk.com/authentication/v1/authenticate";
 
 export const fetch = async (
-  { CLIENT_ID, CLIENT_SECRET }: { CLIENT_ID: string; CLIENT_SECRET: string },
+  { clientID, clientSecret }: { clientID: string; clientSecret: string },
   scopes: scope[],
   grant_type: "client_credentials" | "code",
 ): Promise<Response> => {
@@ -20,7 +20,7 @@ export const fetch = async (
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: `grant_type=${grant_type}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&scope=${scopes.join(" ")}`,
+    body: `grant_type=${grant_type}&client_id=${clientID}&client_secret=${clientSecret}&scope=${scopes.join(" ")}`,
   });
   return await res.json();
 };

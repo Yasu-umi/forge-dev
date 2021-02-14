@@ -5,6 +5,7 @@ import * as hq from "./hq";
 import * as issues from "./issues";
 import * as oss from "./oss";
 import * as project from "./project";
+import * as modelderivative from "./modelderivative";
 import { Node } from "./types";
 
 export const tree: Node = {
@@ -62,6 +63,15 @@ export const tree: Node = {
   oss: {
     children: {
       buckets: oss.buckets.nodeElement,
+    },
+  },
+  modelderivative: {
+    children: {
+      designdata: {
+        children: {
+          metadata: modelderivative.designdata.metadata.nodeElement,
+        },
+      },
     },
   },
 };
