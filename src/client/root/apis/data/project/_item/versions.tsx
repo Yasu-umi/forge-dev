@@ -2,27 +2,25 @@ import Typography from "@material-ui/core/Typography";
 import queryString from "query-string";
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useLocation, useParams, useHistory } from "react-router-dom";
-import { Metadata } from "../../../../../apis/modelderivative/types";
-import { Hub, Item, Project } from "../../../../../apis/types";
-import { base64Decode, base64Encode, getURN } from "../../../../../apis/utils";
-import { urls, PathParam } from "../../../../../lib";
-import * as fetch from "../../../../fetch";
-import { AttributesNameSelector } from "../../../selectors/attributes-name-selector";
-import { ContentTreeSelector, ContentTree, findSelected, findParent, findItems } from "../../../selectors/content-tree-selector";
-import { ItemSelector } from "../../../selectors/item-selector";
-import { NodeElement } from "../../types";
-import { Viewer } from "../../viewer";
+import { Hub, Item, Project, Version } from "../../../../../../apis/types";
+import { urls, PathParam } from "../../../../../../lib";
+import * as fetch from "../../../../../fetch";
+import { AttributesNameSelector } from "../../../../selectors/attributes-name-selector";
+import { ContentTreeSelector, ContentTree, findSelected, findParent, findItems } from "../../../../selectors/content-tree-selector";
+import { ItemSelector } from "../../../../selectors/item-selector";
+import { NodeElement } from "../../../types";
+import { Viewer } from "../../../viewer";
 
-export const apiURL = urls.api.modelderivative.designdata.metadata.get({ urn: ":urn" });
-export const docURL = "https://forge.autodesk.com/en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-contents-GET/";
-export const path = urls.views.apis.modelderivative.designdata.metadata.get({ urn: ":urn" });
+export const apiURL = urls.api.data.project.item.versions.get({ projectID: ":projectID", itemID: ":itemID" });
+export const docURL = "https://forge.autodesk.com/en/docs/data/v2/reference/http/projects-project_id-items-item_id-versions-GET/";
+export const path = urls.views.apis.data.project.item.versions.get({ projectID: ":projectID", itemID: ":itemID" });
 
-const buildURL = ({ urn, hubID, projectID, folderID }: { urn: PathParam; hubID: PathParam; projectID: PathParam; folderID: PathParam }) =>
-  `${urls.views.apis.modelderivative.designdata.metadata.get({
-    urn: typeof urn === "string" ? base64Encode(urn) : ":urn",
+const buildURL = ({ itemID, hubID, projectID, folderID }: { itemID: PathParam; hubID: PathParam; projectID: PathParam; folderID: PathParam }) =>
+  `${urls.views.apis.data.project.item.versions.get({
+    projectID: projectID || ":projectID",
+    itemID: itemID || ":itemID",
   })}?${queryString.stringify({
     hubID,
-    projectID,
     folderID,
   })}`;
 
@@ -32,52 +30,46 @@ export const ViwerComponent: React.FC = () => {
     const query = queryString.parse(location.search);
     return typeof query["hubID"] === "string" ? query["hubID"] : undefined;
   }, [location.search]);
-  const projectID = useMemo(() => {
-    const query = queryString.parse(location.search);
-    return typeof query["projectID"] === "string" ? query["projectID"] : undefined;
-  }, [location.search]);
   const folderID = useMemo(() => {
     const query = queryString.parse(location.search);
     return typeof query["folderID"] === "string" ? query["folderID"] : "hoge";
   }, [location.search]);
 
-  const params = useParams<{ urn?: string }>();
+  const params = useParams<{ itemID?: string; projectID?: string }>();
   const history = useHistory();
-  const urn = typeof params.urn === "string" && params.urn !== ":urn" ? base64Decode(params.urn) : undefined;
+  const projectID = typeof params.projectID === "string" && params.projectID !== ":projectID" ? params.projectID : undefined;
+  const itemID = typeof params.itemID === "string" && params.itemID !== ":itemID" ? params.itemID : undefined;
 
   const [hubs, setHubs] = useState<Hub[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [contentTree, setContentTree] = useState<ContentTree>({ children: [] });
-  const [metadatum, setMetadatum] = useState<Metadata[]>([]);
+  const [versions, setVersions] = useState<Version[]>([]);
 
   const items = useMemo(() => findItems(contentTree), [contentTree]);
 
   const onChangeHubID = useCallback(
     (hubID: string) => {
-      history.push(buildURL({ hubID, projectID, folderID, urn }));
+      history.push(buildURL({ hubID, projectID, folderID, itemID }));
     },
-    [history, projectID, folderID, urn],
+    [history, projectID, folderID, itemID],
   );
   const onChangeProjectID = useCallback(
     (projectID: string) => {
-      history.push(buildURL({ hubID, projectID, folderID, urn }));
+      history.push(buildURL({ hubID, projectID, folderID, itemID }));
     },
-    [history, hubID, folderID, urn],
+    [history, hubID, folderID, itemID],
   );
   const onChangeFolderID = useCallback(
     (folderID: string) => {
-      history.push(buildURL({ hubID, projectID, folderID, urn }));
+      history.push(buildURL({ hubID, projectID, folderID, itemID }));
     },
-    [history, hubID, projectID, urn],
+    [history, hubID, projectID, itemID],
   );
   const onChangeItemID = useCallback(
-    (id: string) => {
-      const item = items.find((item) => item.id === id);
-      const urn = item ? getURN(item) : undefined;
-      if (!urn) return;
-      history.push(buildURL({ hubID, projectID, folderID, urn }));
+    (itemID: string) => {
+      history.push(buildURL({ hubID, projectID, folderID, itemID }));
     },
-    [history, hubID, projectID, folderID, items],
+    [history, hubID, projectID, folderID],
   );
 
   const onSelect = useCallback(
@@ -126,11 +118,11 @@ export const ViwerComponent: React.FC = () => {
 
   useEffect(() => {
     (async () => {
-      if (!urn) return;
-      const metadatum = await fetch.modelderivative.designdata.metadata.get({ urn });
-      setMetadatum(metadatum);
+      if (!projectID || !itemID) return;
+      const versions = await fetch.data.project.item.versions.get({ projectID, itemID });
+      setVersions(versions);
     })();
-  }, [urn]);
+  }, [projectID, itemID]);
 
   useEffect(() => {
     (async () => {
@@ -156,10 +148,8 @@ export const ViwerComponent: React.FC = () => {
     })();
   }, []);
 
-  const itemID = useMemo(() => items.find((item) => getURN(item) === urn)?.id, [items, urn]);
-
   return (
-    <Viewer data={metadatum} apiURL={apiURL} docURL={docURL}>
+    <Viewer data={versions} apiURL={apiURL} docURL={docURL}>
       <div>
         <Typography>Hub</Typography>
         <AttributesNameSelector objectID={hubID} onChangeObjectID={onChangeHubID} objects={hubs} />

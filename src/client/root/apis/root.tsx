@@ -37,6 +37,11 @@ export const tree: Node = {
               contents: data.project.folder.contents.nodeElement,
             },
           },
+          item: {
+            children: {
+              versions: data.project.item.versions.nodeElement,
+            },
+          },
         },
       },
     },

@@ -60,6 +60,8 @@ export const parseIssue = (issue: types.Issue): types.Issue => ({
 
 export const getIssueContainerID = (project: types.Project) => project?.relationships.issues.data.id;
 
+export const getURN = (item: types.Item) => item.relationships.tip.data.id;
+
 export const base64Encode = (val: string) =>
   (globalThis.btoa ? globalThis.btoa(val) : Buffer.from(val, "utf8").toString("base64")).replace("+", "-").replace("/", "_").replace("=", "");
 
