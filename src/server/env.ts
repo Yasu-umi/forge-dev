@@ -30,8 +30,8 @@ const getClientSecret = async () => {
     if (!value) throw new Error("NotFoundClientSecret");
     return value;
   }
-  if (!process.env["CLIENT_ID"]) throw new Error("NotFoundClientID");
-  return process.env["CLIENT_ID"];
+  if (!process.env["CLIENT_SECRET"]) throw new Error("NotFoundClientSecret");
+  return process.env["CLIENT_SECRET"];
 };
 
 const getDynamoTableName = async () => {
