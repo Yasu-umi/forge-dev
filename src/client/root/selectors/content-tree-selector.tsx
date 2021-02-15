@@ -1,7 +1,7 @@
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import React from "react";
-import { ContentType } from "../../../apis/types";
+import { ContentType, Item } from "../../../apis/types";
 import { Selector } from "./selector";
 
 export type ContentTree = { content?: ContentType; children: ContentTree[]; selectedID?: string };
@@ -23,6 +23,14 @@ export const findParent = (tree: ContentTree, id: string): ContentTree | undefin
   if (tree?.content?.id === id) return undefined;
   if (tree.children.find((child) => child?.content?.id === id)) return tree;
   return tree.children.find((child) => findParent(child, id));
+};
+
+export const findItems = (tree: ContentTree): Item[] => {
+  const urns: Item[] = [];
+  if (tree?.content?.type === "items") {
+    urns.push(tree?.content);
+  }
+  return urns.concat(tree.children.map((child) => findItems(child)).reduce((prev, cur) => [...prev, ...cur], []));
 };
 
 export const ContentTreeSelector = ({

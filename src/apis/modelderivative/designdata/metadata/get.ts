@@ -1,5 +1,6 @@
 import fetchPonyfill from "fetch-ponyfill";
 import { assertType } from "typescript-is";
+import { base64Encode } from "../../../utils";
 import * as types from "../../types";
 
 export type Response = types.Metadata;
@@ -8,7 +9,7 @@ export const url = ({ urn }: { urn: string }) => `https://developer.api.autodesk
 
 export const fetch = async (accessToken: string, { urn }: { urn: string }): Promise<types.Metadata> => {
   const { fetch } = fetchPonyfill();
-  const res = await fetch(url({ urn }), {
+  const res = await fetch(url({ urn: base64Encode(urn) }), {
     method: "GET",
     headers: {
       Authorization: `Bearer ${accessToken}`,

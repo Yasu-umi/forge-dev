@@ -3,11 +3,13 @@ import queryString from "query-string";
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useLocation, useParams, useHistory } from "react-router-dom";
 import { Metadata } from "../../../../../apis/modelderivative/types";
-import { Hub, Project } from "../../../../../apis/types";
+import { Hub, Item, Project } from "../../../../../apis/types";
+import { base64Decode, base64Encode } from "../../../../../apis/utils";
 import { urls, PathParam } from "../../../../../lib";
 import * as fetch from "../../../../fetch";
 import { AttributesNameSelector } from "../../../selectors/attributes-name-selector";
-import { ContentTreeSelector, ContentTree, findSelected, findParent } from "../../../selectors/content-tree-selector";
+import { ContentTreeSelector, ContentTree, findSelected, findParent, findItems } from "../../../selectors/content-tree-selector";
+import { Selector } from "../../../selectors/selector";
 import { NodeElement } from "../../types";
 import { Viewer } from "../../viewer";
 
@@ -16,7 +18,9 @@ export const docURL = "https://forge.autodesk.com/en/docs/data/v2/reference/http
 export const path = urls.views.apis.modelderivative.designdata.metadata.get({ urn: ":urn" });
 
 const buildURL = ({ urn, hubID, projectID, folderID }: { urn: PathParam; hubID: PathParam; projectID: PathParam; folderID: PathParam }) =>
-  `${urls.views.apis.modelderivative.designdata.metadata.get({ urn: urn || ":urn" })}?${queryString.stringify({
+  `${urls.views.apis.modelderivative.designdata.metadata.get({
+    urn: typeof urn === "string" ? base64Encode(urn) : ":urn",
+  })}?${queryString.stringify({
     hubID,
     projectID,
     folderID,
@@ -39,12 +43,14 @@ export const ViwerComponent: React.FC = () => {
 
   const params = useParams<{ urn?: string }>();
   const history = useHistory();
-  const urn = !params.urn || params.urn !== ":urn" ? params.urn : undefined;
+  const urn = typeof params.urn === "string" && params.urn !== ":urn" ? base64Decode(params.urn) : undefined;
 
   const [hubs, setHubs] = useState<Hub[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [contentTree, setContentTree] = useState<ContentTree>({ children: [] });
   const [metadata, setMetadata] = useState<Metadata | undefined>(undefined);
+
+  const items = useMemo(() => findItems(contentTree), [contentTree]);
 
   const onChangeHubID = useCallback(
     (hubID: string) => {
@@ -160,6 +166,16 @@ export const ViwerComponent: React.FC = () => {
       <div>
         <Typography>Flolder</Typography>
         <ContentTreeSelector contentTree={contentTree} onSelectID={onSelectID} onDeleteID={onDeleteID} />
+      </div>
+      <div>
+        <Typography>Item</Typography>
+        <Selector
+          objects={items}
+          objectID={urn}
+          getID={useCallback((item: Item) => item.relationships.tip.data.id, [])}
+          getName={useCallback((item: Item) => item.attributes.displayName, [])}
+          onChangeObjectID={onChangeURN}
+        />
       </div>
     </Viewer>
   );

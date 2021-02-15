@@ -7,6 +7,7 @@ import * as apis from "../apis";
 import { urls } from "../lib";
 import { buildAccessTokenPool } from "./access_token_pool";
 import { env } from "./env";
+import { base64Decode } from "../apis/utils";
 
 const accessTokenFetcher = async (env: { clientID: string; clientSecret: string }) => {
   let accessToken: apis.authentication.authenticate.post.Response | null = null;
@@ -247,8 +248,9 @@ export const buildApp = (app: express.Express, env: env) => {
   app.get(
     urls.api.modelderivative.designdata.metadata.get({ urn: ":urn" }),
     tryWrapper(async (req, res) => {
-      const urn = req.params["urn"];
-      if (!urn) throw new Error("NotFoundURN");
+      const _urn = req.params["urn"];
+      if (!_urn) throw new Error("NotFoundURN");
+      const urn = base64Decode(_urn);
       const accessToken = await accessTokenPool.get(req.sessionID);
       if (!accessToken) throw new Error("NotFoundAccessToken");
       const metadata = await apis.modelderivative.dssigndata.metadata.get.fetch(accessToken.access_token, { urn });
