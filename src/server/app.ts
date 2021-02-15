@@ -4,10 +4,10 @@ import express from "express";
 import session from "express-session";
 import morgan from "morgan";
 import * as apis from "../apis";
+import { base64Decode } from "../apis/utils";
 import { urls } from "../lib";
 import { buildAccessTokenPool } from "./access_token_pool";
 import { env } from "./env";
-import { base64Decode } from "../apis/utils";
 
 const accessTokenFetcher = async (env: { clientID: string; clientSecret: string }) => {
   let accessToken: apis.authentication.authenticate.post.Response | null = null;
