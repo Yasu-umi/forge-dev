@@ -6,28 +6,17 @@ export type Response = {
   jsonapi: {
     version: "1.0";
   };
-} & (
-  | {
-      links: {
-        self: {
-          href: string;
-        };
-      };
-      data: types.Hub[];
-    }
-  | {
-      errors: {
-        status: string;
-        code: string;
-        title: string;
-        detail: string;
-      }[];
-    }
-);
+  links: {
+    self: {
+      href: string;
+    };
+  };
+  data: types.Hub[];
+};
 
 export const url = "https://developer.api.autodesk.com/project/v1/hubs";
 
-export const fetch = async (accessToken: string): Promise<types.Hub[] | undefined> => {
+export const fetch = async (accessToken: string): Promise<types.Hub[]> => {
   const { fetch } = fetchPonyfill();
   const res = await fetch(url, {
     method: "GET",
@@ -37,10 +26,6 @@ export const fetch = async (accessToken: string): Promise<types.Hub[] | undefine
     },
   });
   const body: Response = await res.json();
-  if ("errors" in body) {
-    body.errors.forEach((err) => console.error(err));
-    return;
-  }
   try {
     assertType<types.Hub[]>(body.data);
   } catch (e) {

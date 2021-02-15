@@ -1,32 +1,22 @@
 import fetchPonyfill from "fetch-ponyfill";
+import { assertType } from "typescript-is";
 import * as types from "../types";
 
 export type Response = {
   jsonapi: {
     version: "1.0";
   };
-} & (
-  | {
-      links: {
-        self: {
-          href: string;
-        };
-      };
-      data: types.Hub;
-    }
-  | {
-      errors: {
-        status: string;
-        code: string;
-        title: string;
-        detail: string;
-      }[];
-    }
-);
+  links: {
+    self: {
+      href: string;
+    };
+  };
+  data: types.Hub;
+};
 
 export const url = ({ hubID }: { hubID: string }) => `https://developer.api.autodesk.com/project/v1/hubs/${hubID}`;
 
-export const fetch = async (accessToken: string, { hubID }: { hubID: string }): Promise<types.Hub | undefined> => {
+export const fetch = async (accessToken: string, { hubID }: { hubID: string }): Promise<types.Hub> => {
   const { fetch } = fetchPonyfill();
   const res = await fetch(url({ hubID }), {
     method: "GET",
@@ -36,9 +26,11 @@ export const fetch = async (accessToken: string, { hubID }: { hubID: string }): 
     },
   });
   const body: Response = await res.json();
-  if ("errors" in body) {
-    body.errors.forEach((err) => console.error(err));
-    return;
+  try {
+    assertType<types.Hub>(body.data);
+  } catch (e) {
+    console.log(JSON.stringify(body.data, null, 2));
+    console.error(e);
   }
   return body.data;
 };

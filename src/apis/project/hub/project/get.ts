@@ -1,4 +1,5 @@
 import fetchPonyfill from "fetch-ponyfill";
+import { assertType } from "typescript-is";
 import * as types from "../../types";
 
 export type Response = {
@@ -26,5 +27,11 @@ export const fetch = async (accessToken: string, { hubID, projectID }: { hubID: 
     },
   });
   const body: Response = await res.json();
+  try {
+    assertType<types.Project>(body.data);
+  } catch (e) {
+    console.log(JSON.stringify(body.data, null, 2));
+    console.error(e);
+  }
   return body.data;
 };
