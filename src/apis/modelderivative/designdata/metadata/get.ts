@@ -3,11 +3,16 @@ import { assertType } from "typescript-is";
 import { base64Encode } from "../../../utils";
 import * as types from "../../types";
 
-export type Response = types.Metadata;
+export type Response = {
+  data: {
+    type: "metadata";
+    metadata: types.Metadata[];
+  };
+};
 
 export const url = ({ urn }: { urn: string }) => `https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn}/metadata`;
 
-export const fetch = async (accessToken: string, { urn }: { urn: string }): Promise<types.Metadata> => {
+export const fetch = async (accessToken: string, { urn }: { urn: string }): Promise<types.Metadata[]> => {
   const { fetch } = fetchPonyfill();
   const res = await fetch(url({ urn: base64Encode(urn) }), {
     method: "GET",
@@ -17,11 +22,12 @@ export const fetch = async (accessToken: string, { urn }: { urn: string }): Prom
     },
   });
   const body: Response = await res.json();
+  const data = body.data.metadata;
   try {
-    assertType<types.Metadata[]>(body);
+    assertType<types.Metadata[]>(data);
   } catch (e) {
-    console.log(JSON.stringify(body, null, 2));
+    console.log(JSON.stringify(data, null, 2));
     console.error(e);
   }
-  return body;
+  return data;
 };

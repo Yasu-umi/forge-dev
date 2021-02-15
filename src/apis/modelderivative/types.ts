@@ -5,12 +5,7 @@ export type MetadataType = {
 };
 
 export type Metadata = {
-  data: {
-    type: "metadata";
-    metadata: {
-      name: string;
-      role: "3d" | "2d";
-      guid: string;
-    }[];
-  };
+  name: string;
+  role: "3d" | "2d";
+  guid: string;
 };
