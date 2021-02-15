@@ -23,6 +23,12 @@ export const urls = {
                 `/views/apis/data/project/${projectID || ":projectID"}/folders/${folderID || ":folderID"}/contents`,
             },
           },
+          item: {
+            versions: {
+              get: ({ projectID, itemID }: { projectID: PathParam; itemID: PathParam }) =>
+                `/views/apis/data/project/${projectID || ":projectID"}/item/${itemID || ":itemID"}/versions`,
+            },
+          },
         },
       },
       hq: {
@@ -91,6 +97,12 @@ export const urls = {
           contents: {
             get: ({ projectID, folderID }: { projectID: PathParam; folderID: PathParam }) =>
               `/api/data/project/${projectID || ":projectID"}/folder/${folderID || ":folderID"}/contents`,
+          },
+        },
+        item: {
+          versions: {
+            get: ({ projectID, itemID }: { projectID: PathParam; itemID: PathParam }) =>
+              `/api/data/project/${projectID || ":projectID"}/item/${itemID || ":itemID"}/versions`,
           },
         },
       },

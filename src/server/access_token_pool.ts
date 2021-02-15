@@ -1,21 +1,22 @@
 import { DynamoDB } from "aws-sdk";
 import * as apis from "../apis";
 
+export type AccessToken = apis.authentication.gettoken.post.Response;
 export interface AccessTokenPool {
-  get(sessionID: string): Promise<apis.authentication.gettoken.post.Response | undefined>;
-  set(sessionID: string, accessToken: apis.authentication.gettoken.post.Response): Promise<void>;
+  get(sessionID: string): Promise<AccessToken | undefined>;
+  set(sessionID: string, accessToken: AccessToken): Promise<void>;
   destroy(sessionID: string): Promise<void>;
 }
 
 class LocalAccessTokenPool implements AccessTokenPool {
   private pool: {
-    [sessionID: string]: apis.authentication.gettoken.post.Response | undefined;
+    [sessionID: string]: AccessToken | undefined;
   } = {};
 
   public async get(sessionID: string) {
     return this.pool[sessionID];
   }
-  public async set(sessionID: string, accessToken: apis.authentication.gettoken.post.Response) {
+  public async set(sessionID: string, accessToken: AccessToken) {
     this.pool[sessionID] = accessToken;
   }
   public async destroy(sessionID: string) {
@@ -31,7 +32,7 @@ class DynamoAccessTokenPool implements AccessTokenPool {
     this.client = new DynamoDB.DocumentClient({ region: "ap-northeast-1" });
   }
   public get(sessionID: string) {
-    return new Promise<apis.authentication.gettoken.post.Response | undefined>((resolve, reject) => {
+    return new Promise<AccessToken | undefined>((resolve, reject) => {
       this.client.get(
         {
           TableName: this.tableName,
@@ -45,7 +46,7 @@ class DynamoAccessTokenPool implements AccessTokenPool {
       );
     });
   }
-  public set(sessionID: string, accessToken: apis.authentication.gettoken.post.Response) {
+  public set(sessionID: string, accessToken: AccessToken) {
     return new Promise<void>((resolve, reject) => {
       this.client.put(
         {
