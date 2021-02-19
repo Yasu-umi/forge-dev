@@ -3,11 +3,11 @@ import cookieParser from "cookie-parser";
 import express from "express";
 import session from "express-session";
 import morgan from "morgan";
-import * as apis from "../apis";
-import { urls } from "../lib";
 import { buildAccessTokenPool } from "./access_token_pool";
 import { buildAPIRouter } from "./api";
 import { env } from "./env";
+import * as api from "api";
+import { urls } from "lib";
 
 export const buildApp = (app: express.Express, env: env) => {
   const accessTokenPool = buildAccessTokenPool(env);
@@ -49,7 +49,7 @@ export const buildApp = (app: express.Express, env: env) => {
   app.use("/views/*", express.static("public/index.html"));
 
   app.get(urls.login.get, (_req, res) => {
-    const scope = [apis.scopes.data.read, apis.scopes.account.read, apis.scopes.bucket.read].join(" ");
+    const scope = [api.scopes.data.read, api.scopes.account.read, api.scopes.bucket.read].join(" ");
     const redirectURI = `${env.host}${urls.api.oauth.callback.get}`;
     return res.redirect(
       `https://developer.api.autodesk.com/authentication/v1/authorize?response_type=code&client_id=${env.clientID}&redirect_uri=${redirectURI}&scope=${scope}`,

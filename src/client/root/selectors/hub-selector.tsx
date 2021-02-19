@@ -1,30 +1,22 @@
-import FormControl from "@material-ui/core/FormControl";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
+import Typography from "@material-ui/core/Typography";
 import React from "react";
-import { Hub } from "../../../apis/types";
-import { useStyles } from "./style";
+import { AttributesNameSelector } from "./attributes-name-selector";
+import { Hub } from "api/types";
 
 export const HubSelector = ({
   hubs,
   hubID,
   onChangeHubID,
 }: {
-  hubs: Hub[];
+  hubs: Hub[] | undefined;
   hubID: string | undefined;
-  onChangeHubID: (ev: React.ChangeEvent<{ value: unknown }>) => void;
+  onChangeHubID: (id: string) => void;
 }) => {
-  const styles = useStyles();
-  if (hubs.length === 0 || !hubID) return null;
+  if (!hubs || hubs.length === 0 || !hubID) return null;
   return (
-    <FormControl classes={{ root: styles.selectorWrapperRoot }}>
-      <Select value={hubID} onChange={onChangeHubID} classes={{ root: styles.selectorRoot, icon: styles.selectorIcon }}>
-        {hubs.map((hub) => (
-          <MenuItem key={hub.id} value={hub.id}>
-            {hub.attributes.name}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+    <div>
+      <Typography>Hub</Typography>
+      <AttributesNameSelector objectID={hubID} onChangeObjectID={onChangeHubID} objects={hubs} />
+    </div>
   );
 };

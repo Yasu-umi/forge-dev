@@ -1,8 +1,8 @@
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import React from "react";
-import { ContentType, Item } from "../../../apis/types";
 import { Selector } from "./selector";
+import { ContentType, Item } from "api/types";
 
 export type ContentTree = { content?: ContentType; children: ContentTree[]; selectedID?: string };
 

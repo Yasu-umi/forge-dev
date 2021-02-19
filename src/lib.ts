@@ -11,8 +11,8 @@ export const urls = {
     login: {
       get: "/views/login",
     },
-    apis: {
-      get: "/views/apis",
+    api: {
+      get: "/views/api",
       data: {
         project: {
           folder: {
@@ -20,13 +20,13 @@ export const urls = {
               `/api/data/project/${projectID || ":projectID"}/folder/${folderID || ":folderID"}`,
             contents: {
               get: ({ projectID, folderID }: { projectID: PathParam; folderID: PathParam }) =>
-                `/views/apis/data/project/${projectID || ":projectID"}/folders/${folderID || ":folderID"}/contents`,
+                `/views/api/data/project/${projectID || ":projectID"}/folders/${folderID || ":folderID"}/contents`,
             },
           },
           item: {
             versions: {
               get: ({ projectID, itemID }: { projectID: PathParam; itemID: PathParam }) =>
-                `/views/apis/data/project/${projectID || ":projectID"}/item/${itemID || ":itemID"}/versions`,
+                `/views/api/data/project/${projectID || ":projectID"}/item/${itemID || ":itemID"}/versions`,
             },
           },
         },
@@ -34,11 +34,11 @@ export const urls = {
       hq: {
         account: {
           projects: {
-            get: ({ accountID }: { accountID: PathParam }) => `/views/apis/hq/account/${accountID || ":accountID"}/projects`,
+            get: ({ accountID }: { accountID: PathParam }) => `/views/api/hq/account/${accountID || ":accountID"}/projects`,
           },
           project: {
             get: ({ accountID, projectID }: { accountID: PathParam; projectID: PathParam }) =>
-              `/views/apis/hq/account/${accountID || ":accountID"}/project/${projectID || ":projectID"}`,
+              `/views/api/hq/account/${accountID || ":accountID"}/project/${projectID || ":projectID"}`,
           },
         },
       },
@@ -46,38 +46,38 @@ export const urls = {
         container: {
           qualityIssues: {
             get: ({ issueContainerID }: { issueContainerID: PathParam }) =>
-              `/views/apis/issues/container/${issueContainerID || ":issueContainerID"}/quality-issues`,
+              `/views/api/issues/container/${issueContainerID || ":issueContainerID"}/quality-issues`,
           },
         },
       },
       project: {
         hubs: {
-          get: "/views/apis/project/hubs",
+          get: "/views/api/project/hubs",
         },
         hub: {
-          get: ({ hubID }: { hubID: PathParam }) => `/views/apis/project/hub/${hubID || ":hubID"}`,
+          get: ({ hubID }: { hubID: PathParam }) => `/views/api/project/hub/${hubID || ":hubID"}`,
           projects: {
-            get: ({ hubID }: { hubID: PathParam }) => `/views/apis/project/hub/${hubID || ":hubID"}/projects`,
+            get: ({ hubID }: { hubID: PathParam }) => `/views/api/project/hub/${hubID || ":hubID"}/projects`,
           },
           project: {
             get: ({ hubID, projectID }: { hubID: PathParam; projectID: PathParam }) =>
-              `/views/apis/project/hub/${hubID || ":hubID"}/project/${projectID || ":projectID"}`,
+              `/views/api/project/hub/${hubID || ":hubID"}/project/${projectID || ":projectID"}`,
             topFolders: {
               get: ({ hubID, projectID }: { hubID: PathParam; projectID: PathParam }) =>
-                `/views/apis/project/hub/${hubID || ":hubID"}/project/${projectID || ":projectID"}/topFolders`,
+                `/views/api/project/hub/${hubID || ":hubID"}/project/${projectID || ":projectID"}/topFolders`,
             },
           },
         },
       },
       oss: {
         buckets: {
-          get: "/views/apis/oss/buckets",
+          get: "/views/api/oss/buckets",
         },
       },
       modelderivative: {
         designdata: {
           metadata: {
-            get: ({ urn }: { urn: PathParam }) => `/views/apis/modelderivative/designdata/${urn || ":urn"}/metadata`,
+            get: ({ urn }: { urn: PathParam }) => `/views/api/modelderivative/designdata/${urn || ":urn"}/metadata`,
           },
         },
       },

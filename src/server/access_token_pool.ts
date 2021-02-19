@@ -1,7 +1,7 @@
 import { DynamoDB } from "aws-sdk";
-import * as apis from "../apis";
+import * as api from "api";
 
-export type AccessToken = apis.authentication.gettoken.post.Response;
+export type AccessToken = api.authentication.gettoken.post.Response;
 export interface AccessTokenPool {
   get(sessionID: string): Promise<AccessToken | undefined>;
   set(sessionID: string, accessToken: AccessToken): Promise<void>;

@@ -1,7 +1,7 @@
-import { Bucket } from "../../../apis/oss/types";
-import { urls } from "../../../lib";
+import * as api from "api";
+import { urls } from "lib";
 
-export const get = async (): Promise<Bucket[]> => {
+export const get = async (): Promise<api.oss.buckets.get.Response> => {
   const res = await fetch(urls.api.oss.buckets.get);
   return (await res.json()).data;
 };

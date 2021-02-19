@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Item } from "../../../apis/types";
+import { Item } from "../../../api/types";
 import { Selector } from "./selector";
 
 export const ItemSelector = ({

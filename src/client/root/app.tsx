@@ -5,9 +5,9 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { urls } from "../../lib";
-import { Root as APIRoot } from "./apis/root";
+import { Root as APIRoot } from "./api/root";
 import { Sidebar } from "./sidebar";
+import { urls } from "lib";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -69,7 +69,7 @@ export const App = () => {
         <main className={styles.content}>
           <Toolbar />
           <Switch>
-            <Route path={urls.views.apis.get}>
+            <Route path={urls.views.api.get}>
               <APIRoot />
             </Route>
           </Switch>

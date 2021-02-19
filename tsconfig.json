@@ -5,7 +5,9 @@
     "sourceMap": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "jsx": "react"
+    "jsx": "react",
+    "rootDir": "src",
+    "baseUrl": "src"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

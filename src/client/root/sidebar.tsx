@@ -11,8 +11,8 @@ import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import React, { useMemo } from "react";
 import { NavLink } from "react-router-dom";
-import { tree } from "./apis/root";
-import { Node } from "./apis/types";
+import { tree } from "./api/root";
+import { Node } from "./api/types";
 
 const APIsNodeList = ({ node, nested }: { node: Node; nested: number }) => {
   const theme = useTheme();
@@ -76,8 +76,8 @@ export const Sidebar = () => {
   return (
     <Drawer anchor={"left"} open={true} variant="permanent" className={styles.drawer} classes={{ paper: styles.drawerPaper }}>
       <Toolbar />
-      <List component="nav" aria-labelledby="apis" className={styles.list}>
-        <ListSubheader component="div" id="apis">
+      <List component="nav" aria-labelledby="api" className={styles.list}>
+        <ListSubheader component="div" id="api">
           APIS
         </ListSubheader>
         <APIsNodeList node={tree} nested={0} />
