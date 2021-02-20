@@ -1,7 +1,7 @@
 import React from "react";
 import { NodeElement } from "../types";
 import { Viewer } from "../viewer";
-import { useBuckets } from "client/root/helpers";
+import * as helpers from "client/root/helpers";
 import { urls } from "lib";
 
 export const apiURL = urls.api.oss.buckets.get;
@@ -9,7 +9,7 @@ export const docURL = "https://forge.autodesk.com/en/docs/bim360/v1/reference/ht
 export const path = urls.views.api.oss.buckets.get;
 
 export const ViwerComponent: React.FC = () => {
-  const [buckets] = useBuckets();
+  const [buckets] = helpers.useBuckets();
   return <Viewer data={buckets} apiURL={apiURL} docURL={docURL} />;
 };
 

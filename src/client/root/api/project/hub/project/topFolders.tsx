@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { NodeElement } from "../../../types";
 import { Viewer } from "../../../viewer";
-import { useHubs, useProjects, useTopFolders } from "client/root/helpers";
+import * as helpers from "client/root/helpers";
 import { HubSelector, ProjectSelector } from "client/root/selectors";
 import { urls } from "lib";
 
@@ -11,14 +11,14 @@ export const docURL = "https://forge.autodesk.com/en/docs/data/v2/reference/http
 export const path = urls.views.api.project.hub.project.topFolders.get({ hubID: ":hubID", projectID: ":projectID" });
 
 export const ViwerComponent: React.FC = () => {
-  const params = useParams<{ hubID?: string; projectID?: string }>();
-  const history = useHistory();
-  const hubID = !params.hubID || params.hubID !== ":hubID" ? params.hubID : undefined;
-  const projectID = !params.projectID || params.projectID !== ":projectID" ? params.projectID : undefined;
+  const hubID = helpers.params.useHubID();
+  const projectID = helpers.params.useProjectID();
 
-  const [hubs] = useHubs();
-  const [projects] = useProjects({ hubID });
-  const [topFolders] = useTopFolders({ hubID, projectID });
+  const history = useHistory();
+
+  const [hubs] = helpers.useHubs();
+  const [projects] = helpers.useProjects({ hubID });
+  const [topFolders] = helpers.useTopFolders({ hubID, projectID });
 
   const onChangeHubID = useCallback(
     (hubID: string) => {

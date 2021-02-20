@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { NodeElement } from "../../types";
 import { Viewer } from "../../viewer";
 import * as api from "api";
-import { useHubs, useHQProjects } from "client/root/helpers";
+import * as helpers from "client/root/helpers";
 import { HubSelector } from "client/root/selectors";
 import { urls } from "lib";
 
@@ -12,12 +12,12 @@ export const docURL = "https://forge.autodesk.com/en/docs/bim360/v1/reference/ht
 export const path = urls.views.api.hq.account.projects.get({ accountID: ":accountID" });
 
 export const ViwerComponent: React.FC = () => {
-  const params = useParams<{ accountID?: string }>();
-  const history = useHistory();
-  const accountID = !params.accountID || params.accountID !== ":accountID" ? params.accountID : undefined;
+  const accountID = helpers.params.useAccountID();
 
-  const [hubs] = useHubs();
-  const [projects] = useHQProjects({ accountID });
+  const history = useHistory();
+
+  const [hubs] = helpers.useHubs();
+  const [projects] = helpers.useHQProjects({ accountID });
 
   const onChangeHubID = useCallback(
     (hubID: string) => {

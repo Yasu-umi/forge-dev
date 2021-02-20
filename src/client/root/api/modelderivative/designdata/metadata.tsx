@@ -1,10 +1,10 @@
 import queryString from "query-string";
 import React, { useMemo, useCallback } from "react";
-import { useLocation, useParams, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { NodeElement } from "../../types";
 import { Viewer } from "../../viewer";
 import * as api from "api";
-import { useHubs, useProjects, useContentTree, useMetadata } from "client/root/helpers";
+import * as helpers from "client/root/helpers";
 import { HubSelector, findItems, ProjectSelector, FolderSelector, ItemSelector } from "client/root/selectors";
 import { urls, PathParam } from "lib";
 
@@ -22,28 +22,17 @@ const buildURL = ({ urn, hubID, projectID, folderID }: { urn: PathParam; hubID: 
   })}`;
 
 export const ViwerComponent: React.FC = () => {
-  const location = useLocation();
-  const hubID = useMemo(() => {
-    const query = queryString.parse(location.search);
-    return typeof query["hubID"] === "string" ? query["hubID"] : undefined;
-  }, [location.search]);
-  const projectID = useMemo(() => {
-    const query = queryString.parse(location.search);
-    return typeof query["projectID"] === "string" ? query["projectID"] : undefined;
-  }, [location.search]);
-  const folderID = useMemo(() => {
-    const query = queryString.parse(location.search);
-    return typeof query["folderID"] === "string" ? query["folderID"] : "hoge";
-  }, [location.search]);
+  const hubID = helpers.search.useHubID();
+  const projectID = helpers.search.useProjectID();
+  const folderID = helpers.search.useFolderID();
+  const urn = helpers.params.useURN();
 
-  const params = useParams<{ urn?: string }>();
   const history = useHistory();
-  const urn = typeof params.urn === "string" && params.urn !== ":urn" ? api.utils.base64Decode(params.urn) : undefined;
 
-  const [hubs] = useHubs();
-  const [projects] = useProjects({ hubID });
-  const [contentTree, setContentTree] = useContentTree({ hubID, projectID });
-  const [metadata] = useMetadata({ urn });
+  const [hubs] = helpers.useHubs();
+  const [projects] = helpers.useProjects({ hubID });
+  const [contentTree, setContentTree] = helpers.useContentTree({ hubID, projectID });
+  const [metadata] = helpers.useMetadata({ urn });
 
   const items = useMemo(() => findItems(contentTree), [contentTree]);
 

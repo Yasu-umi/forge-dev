@@ -1,9 +1,9 @@
 import queryString from "query-string";
 import React, { useMemo, useCallback } from "react";
-import { useLocation, useParams, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { NodeElement } from "../../../types";
 import { Viewer } from "../../../viewer";
-import { useVersions, useHubs, useProjects, useContentTree } from "client/root/helpers";
+import * as helpers from "client/root/helpers";
 import { HubSelector, ItemSelector, FolderSelector, findItems, ProjectSelector } from "client/root/selectors";
 import { urls, PathParam } from "lib";
 
@@ -21,25 +21,17 @@ const buildURL = ({ itemID, hubID, projectID, folderID }: { itemID: PathParam; h
   })}`;
 
 export const ViwerComponent: React.FC = () => {
-  const location = useLocation();
-  const hubID = useMemo(() => {
-    const query = queryString.parse(location.search);
-    return typeof query["hubID"] === "string" ? query["hubID"] : undefined;
-  }, [location.search]);
-  const folderID = useMemo(() => {
-    const query = queryString.parse(location.search);
-    return typeof query["folderID"] === "string" ? query["folderID"] : "hoge";
-  }, [location.search]);
+  const hubID = helpers.search.useHubID();
+  const folderID = helpers.search.useFolderID();
+  const projectID = helpers.params.useProjectID();
+  const itemID = helpers.params.useItemID();
 
-  const params = useParams<{ itemID?: string; projectID?: string }>();
   const history = useHistory();
-  const projectID = typeof params.projectID === "string" && params.projectID !== ":projectID" ? params.projectID : undefined;
-  const itemID = typeof params.itemID === "string" && params.itemID !== ":itemID" ? params.itemID : undefined;
 
-  const [hubs] = useHubs();
-  const [projects] = useProjects({ hubID });
-  const [contentTree, setContentTree] = useContentTree({ hubID, projectID });
-  const [versions] = useVersions({ projectID, itemID });
+  const [hubs] = helpers.useHubs();
+  const [projects] = helpers.useProjects({ hubID });
+  const [contentTree, setContentTree] = helpers.useContentTree({ hubID, projectID });
+  const [versions] = helpers.useVersions({ projectID, itemID });
 
   const items = useMemo(() => findItems(contentTree), [contentTree]);
 

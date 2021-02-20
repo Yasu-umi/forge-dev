@@ -1,9 +1,9 @@
 import queryString from "query-string";
-import React, { useMemo, useCallback } from "react";
-import { useLocation, useParams, useHistory } from "react-router-dom";
+import React, { useCallback } from "react";
+import { useHistory } from "react-router-dom";
 import { NodeElement } from "../../../types";
 import { Viewer } from "../../../viewer";
-import { useHubs, useProjects, useContentTree } from "client/root/helpers";
+import * as helpers from "client/root/helpers";
 import { HubSelector, ProjectSelector, FolderSelector, findSelected } from "client/root/selectors";
 import { urls, PathParam } from "lib";
 
@@ -18,20 +18,15 @@ const buildURL = ({ hubID, projectID, folderID }: { hubID: PathParam; projectID:
   })}?${queryString.stringify({ hubID: hubID || ":hubID" })}`;
 
 export const ViwerComponent: React.FC = () => {
-  const location = useLocation();
-  const hubID = useMemo(() => {
-    const query = queryString.parse(location.search);
-    return typeof query["hubID"] === "string" ? query["hubID"] : undefined;
-  }, [location.search]);
+  const hubID = helpers.search.useHubID();
+  const projectID = helpers.params.useProjectID();
+  const folderID = helpers.params.useFolderID();
 
-  const params = useParams<{ projectID?: string; folderID?: string }>();
   const history = useHistory();
-  const projectID = !params.projectID || params.projectID !== ":projectID" ? params.projectID : undefined;
-  const folderID = !params.folderID || params.folderID !== ":folderID" ? params.folderID : undefined;
 
-  const [hubs] = useHubs();
-  const [projects] = useProjects({ hubID });
-  const [contentTree, setContentTree] = useContentTree({ hubID, projectID });
+  const [hubs] = helpers.useHubs();
+  const [projects] = helpers.useProjects({ hubID });
+  const [contentTree, setContentTree] = helpers.useContentTree({ hubID, projectID });
 
   const onChangeHubID = useCallback(
     (hubID: string) => {

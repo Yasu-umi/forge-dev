@@ -1,10 +1,10 @@
 import queryString from "query-string";
-import React, { useCallback, useMemo } from "react";
-import { useParams, useHistory, useLocation } from "react-router-dom";
+import React, { useCallback } from "react";
+import { useHistory } from "react-router-dom";
 import { NodeElement } from "../../types";
 import { Viewer } from "../../viewer";
 import * as api from "api";
-import { useHubs, useProjects, useIssues } from "client/root/helpers";
+import * as helpers from "client/root/helpers";
 import { HubSelector, ProjectSelector } from "client/root/selectors";
 import { PathParam, urls } from "lib";
 
@@ -17,19 +17,14 @@ export const buildURL = ({ hubID, issueContainerID }: { hubID: PathParam; issueC
   })}`;
 
 export const ViwerComponent: React.FC = () => {
-  const location = useLocation();
-  const hubID = useMemo(() => {
-    const query = queryString.parse(location.search);
-    return typeof query["hubID"] === "string" ? query["hubID"] : undefined;
-  }, [location.search]);
+  const hubID = helpers.search.useHubID();
+  const issueContainerID = helpers.params.useIssueContainerID();
 
-  const params = useParams<{ issueContainerID?: string }>();
   const history = useHistory();
-  const issueContainerID = !params.issueContainerID || params.issueContainerID !== ":issueContainerID" ? params.issueContainerID : undefined;
 
-  const [hubs] = useHubs();
-  const [projects] = useProjects({ hubID });
-  const [issues] = useIssues({ issueContainerID });
+  const [hubs] = helpers.useHubs();
+  const [projects] = helpers.useProjects({ hubID });
+  const [issues] = helpers.useIssues({ issueContainerID });
 
   const projectID = projects?.data.find((p) => api.utils.getIssueContainerID(p) === issueContainerID)?.id;
 
