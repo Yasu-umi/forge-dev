@@ -1,11 +1,10 @@
 import queryString from "query-string";
-import React, { useEffect, useMemo, useState, useCallback } from "react";
+import React, { useMemo, useCallback } from "react";
 import { useLocation, useParams, useHistory } from "react-router-dom";
 import { NodeElement } from "../../../types";
 import { Viewer } from "../../../viewer";
-import * as api from "api";
-import * as fetch from "client/fetch";
-import { HubSelector, ItemSelector, FolderSelector, ContentTree, findItems, ProjectSelector } from "client/root/selectors";
+import { useVersions, useHubs, useProjects, useContentTree } from "client/root/helpers";
+import { HubSelector, ItemSelector, FolderSelector, findItems, ProjectSelector } from "client/root/selectors";
 import { urls, PathParam } from "lib";
 
 export const apiURL = urls.api.data.project.item.versions.get({ projectID: ":projectID", itemID: ":itemID" });
@@ -37,10 +36,10 @@ export const ViwerComponent: React.FC = () => {
   const projectID = typeof params.projectID === "string" && params.projectID !== ":projectID" ? params.projectID : undefined;
   const itemID = typeof params.itemID === "string" && params.itemID !== ":itemID" ? params.itemID : undefined;
 
-  const [hubs, setHubs] = useState<api.project.hubs.get.Response | undefined>(undefined);
-  const [projects, setProjects] = useState<api.project.hub.projects.get.Response | undefined>(undefined);
-  const [contentTree, setContentTree] = useState<ContentTree>({ children: [] });
-  const [versions, setVersions] = useState<api.data.project.item.versions.get.Response | undefined>(undefined);
+  const [hubs] = useHubs();
+  const [projects] = useProjects({ hubID });
+  const [contentTree, setContentTree] = useContentTree({ hubID, projectID });
+  const [versions] = useVersions({ projectID, itemID });
 
   const items = useMemo(() => findItems(contentTree), [contentTree]);
 
@@ -68,38 +67,6 @@ export const ViwerComponent: React.FC = () => {
     },
     [history, hubID, projectID, folderID],
   );
-
-  useEffect(() => {
-    (async () => {
-      if (!projectID || !itemID) return;
-      const versions = await fetch.data.project.item.versions.get({ projectID, itemID });
-      setVersions(versions);
-    })();
-  }, [projectID, itemID]);
-
-  useEffect(() => {
-    (async () => {
-      if (!hubID || !projectID) return;
-      const topFolders = await fetch.project.hub.project.topFolders.get({ hubID, projectID });
-      const contentTree: ContentTree = { children: topFolders.data.map((content) => ({ content, children: [] })) };
-      setContentTree(contentTree);
-    })();
-  }, [hubID, projectID]);
-
-  useEffect(() => {
-    (async () => {
-      if (!hubID) return;
-      const projects = await fetch.project.hub.projects.get({ hubID });
-      setProjects(projects);
-    })();
-  }, [hubID]);
-
-  useEffect(() => {
-    (async () => {
-      const hubs = await fetch.project.hubs.get();
-      setHubs(hubs);
-    })();
-  }, []);
 
   return (
     <Viewer data={versions} apiURL={apiURL} docURL={docURL}>

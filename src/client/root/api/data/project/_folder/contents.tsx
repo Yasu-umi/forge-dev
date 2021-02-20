@@ -1,11 +1,10 @@
 import queryString from "query-string";
-import React, { useEffect, useMemo, useState, useCallback } from "react";
+import React, { useMemo, useCallback } from "react";
 import { useLocation, useParams, useHistory } from "react-router-dom";
 import { NodeElement } from "../../../types";
 import { Viewer } from "../../../viewer";
-import * as api from "api";
-import * as fetch from "client/fetch";
-import { HubSelector, ProjectSelector, FolderSelector, ContentTree, findSelected } from "client/root/selectors";
+import { useHubs, useProjects, useContentTree } from "client/root/helpers";
+import { HubSelector, ProjectSelector, FolderSelector, findSelected } from "client/root/selectors";
 import { urls, PathParam } from "lib";
 
 export const apiURL = urls.api.data.project.folder.contents.get({ projectID: ":projectID", folderID: ":folderID" });
@@ -30,9 +29,9 @@ export const ViwerComponent: React.FC = () => {
   const projectID = !params.projectID || params.projectID !== ":projectID" ? params.projectID : undefined;
   const folderID = !params.folderID || params.folderID !== ":folderID" ? params.folderID : undefined;
 
-  const [hubs, setHubs] = useState<api.project.hubs.get.Response | undefined>(undefined);
-  const [projects, setProjects] = useState<api.project.hub.projects.get.Response | undefined>(undefined);
-  const [contentTree, setContentTree] = useState<ContentTree>({ children: [] });
+  const [hubs] = useHubs();
+  const [projects] = useProjects({ hubID });
+  const [contentTree, setContentTree] = useContentTree({ hubID, projectID });
 
   const onChangeHubID = useCallback(
     (hubID: string) => {
@@ -52,30 +51,6 @@ export const ViwerComponent: React.FC = () => {
     },
     [history, hubID, projectID],
   );
-
-  useEffect(() => {
-    (async () => {
-      if (!hubID || !projectID) return;
-      const topFolders = await fetch.project.hub.project.topFolders.get({ hubID, projectID });
-      const contentTree: ContentTree = { children: topFolders.data.map((content) => ({ content, children: [] })) };
-      setContentTree(contentTree);
-    })();
-  }, [hubID, projectID]);
-
-  useEffect(() => {
-    (async () => {
-      if (!hubID) return;
-      const projects = await fetch.project.hub.projects.get({ hubID });
-      setProjects(projects);
-    })();
-  }, [hubID]);
-
-  useEffect(() => {
-    (async () => {
-      const hubs = await fetch.project.hubs.get();
-      setHubs(hubs);
-    })();
-  }, []);
 
   const selected = findSelected(contentTree);
   const data = selected ? selected.children.map(({ content }) => content) : [];

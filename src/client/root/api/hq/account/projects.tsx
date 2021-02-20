@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useCallback } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { NodeElement } from "../../types";
 import { Viewer } from "../../viewer";
 import * as api from "api";
-import * as fetch from "client/fetch";
+import { useHubs, useHQProjects } from "client/root/helpers";
 import { HubSelector } from "client/root/selectors";
 import { urls } from "lib";
 
@@ -16,8 +16,8 @@ export const ViwerComponent: React.FC = () => {
   const history = useHistory();
   const accountID = !params.accountID || params.accountID !== ":accountID" ? params.accountID : undefined;
 
-  const [hubs, setHubs] = useState<api.project.hubs.get.Response | undefined>(undefined);
-  const [projects, setProjects] = useState<api.hq.account.projects.get.Response | undefined>(undefined);
+  const [hubs] = useHubs();
+  const [projects] = useHQProjects({ accountID });
 
   const onChangeHubID = useCallback(
     (hubID: string) => {
@@ -26,21 +26,6 @@ export const ViwerComponent: React.FC = () => {
     },
     [history],
   );
-
-  useEffect(() => {
-    (async () => {
-      if (!accountID) return;
-      const projects = await fetch.hq.account.projects.get({ accountID });
-      setProjects(projects);
-    })();
-  }, [accountID]);
-
-  useEffect(() => {
-    (async () => {
-      const hubs = await fetch.project.hubs.get();
-      setHubs(hubs);
-    })();
-  }, []);
 
   return (
     <Viewer data={projects} apiURL={apiURL} docURL={docURL}>

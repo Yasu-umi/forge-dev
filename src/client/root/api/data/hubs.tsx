@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { NodeElement } from "../types";
 import { Viewer } from "../viewer";
-import * as api from "api";
-import * as fetch from "client/fetch";
+import { useHubs } from "client/root/helpers";
 import { urls } from "lib";
 
 export const apiURL = urls.api.project.hubs.get;
@@ -10,12 +9,7 @@ export const docURL = "https://forge.autodesk.com/en/docs/data/v2/reference/http
 export const path = urls.views.api.project.hubs.get;
 
 export const ViwerComponent: React.FC = () => {
-  const [hubs, setHubs] = useState<api.project.hubs.get.Response | undefined>(undefined);
-  useEffect(() => {
-    (async () => {
-      setHubs(await fetch.project.hubs.get());
-    })();
-  }, []);
+  const [hubs] = useHubs();
   return <Viewer data={hubs} apiURL={apiURL} docURL={docURL} />;
 };
 

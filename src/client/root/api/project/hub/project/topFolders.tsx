@@ -1,9 +1,8 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useCallback } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { NodeElement } from "../../../types";
 import { Viewer } from "../../../viewer";
-import * as api from "api";
-import * as fetch from "client/fetch";
+import { useHubs, useProjects, useTopFolders } from "client/root/helpers";
 import { HubSelector, ProjectSelector } from "client/root/selectors";
 import { urls } from "lib";
 
@@ -17,9 +16,9 @@ export const ViwerComponent: React.FC = () => {
   const hubID = !params.hubID || params.hubID !== ":hubID" ? params.hubID : undefined;
   const projectID = !params.projectID || params.projectID !== ":projectID" ? params.projectID : undefined;
 
-  const [hubs, setHubs] = useState<api.project.hubs.get.Response | undefined>(undefined);
-  const [projects, setProjects] = useState<api.project.hub.projects.get.Response | undefined>(undefined);
-  const [topFolders, setTopFolders] = useState<api.project.hub.project.topFolders.get.Response | undefined>(undefined);
+  const [hubs] = useHubs();
+  const [projects] = useProjects({ hubID });
+  const [topFolders] = useTopFolders({ hubID, projectID });
 
   const onChangeHubID = useCallback(
     (hubID: string) => {
@@ -34,29 +33,6 @@ export const ViwerComponent: React.FC = () => {
     },
     [history, hubID],
   );
-
-  useEffect(() => {
-    (async () => {
-      const hubs = await fetch.project.hubs.get();
-      setHubs(hubs);
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      if (!hubID) return;
-      const projects = await fetch.project.hub.projects.get({ hubID });
-      setProjects(projects);
-    })();
-  }, [hubID]);
-
-  useEffect(() => {
-    (async () => {
-      if (!hubID || !projectID) return;
-      const topFolders = await fetch.project.hub.project.topFolders.get({ hubID, projectID });
-      setTopFolders(topFolders);
-    })();
-  }, [hubID, projectID]);
 
   return (
     <Viewer data={topFolders} apiURL={apiURL} docURL={docURL}>

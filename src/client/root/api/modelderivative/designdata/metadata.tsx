@@ -1,11 +1,11 @@
 import queryString from "query-string";
-import React, { useEffect, useMemo, useState, useCallback } from "react";
+import React, { useMemo, useCallback } from "react";
 import { useLocation, useParams, useHistory } from "react-router-dom";
 import { NodeElement } from "../../types";
 import { Viewer } from "../../viewer";
 import * as api from "api";
-import * as fetch from "client/fetch";
-import { HubSelector, ContentTree, findItems, ProjectSelector, FolderSelector, ItemSelector } from "client/root/selectors";
+import { useHubs, useProjects, useContentTree, useMetadata } from "client/root/helpers";
+import { HubSelector, findItems, ProjectSelector, FolderSelector, ItemSelector } from "client/root/selectors";
 import { urls, PathParam } from "lib";
 
 export const apiURL = urls.api.modelderivative.designdata.metadata.get({ urn: ":urn" });
@@ -40,10 +40,10 @@ export const ViwerComponent: React.FC = () => {
   const history = useHistory();
   const urn = typeof params.urn === "string" && params.urn !== ":urn" ? api.utils.base64Decode(params.urn) : undefined;
 
-  const [hubs, setHubs] = useState<api.project.hubs.get.Response | undefined>(undefined);
-  const [projects, setProjects] = useState<api.project.hub.projects.get.Response | undefined>(undefined);
-  const [contentTree, setContentTree] = useState<ContentTree>({ children: [] });
-  const [metadatum, setMetadatum] = useState<api.modelderivative.designdata.metadata.get.Response | undefined>(undefined);
+  const [hubs] = useHubs();
+  const [projects] = useProjects({ hubID });
+  const [contentTree, setContentTree] = useContentTree({ hubID, projectID });
+  const [metadata] = useMetadata({ urn });
 
   const items = useMemo(() => findItems(contentTree), [contentTree]);
 
@@ -75,42 +75,10 @@ export const ViwerComponent: React.FC = () => {
     [history, hubID, projectID, folderID, items],
   );
 
-  useEffect(() => {
-    (async () => {
-      if (!urn) return;
-      const metadatum = await fetch.modelderivative.designdata.metadata.get({ urn });
-      setMetadatum(metadatum);
-    })();
-  }, [urn]);
-
-  useEffect(() => {
-    (async () => {
-      if (!hubID || !projectID) return;
-      const topFolders = await fetch.project.hub.project.topFolders.get({ hubID, projectID });
-      const contentTree: ContentTree = { children: topFolders.data.map((content) => ({ content, children: [] })) };
-      setContentTree(contentTree);
-    })();
-  }, [hubID, projectID]);
-
-  useEffect(() => {
-    (async () => {
-      if (!hubID) return;
-      const projects = await fetch.project.hub.projects.get({ hubID });
-      setProjects(projects);
-    })();
-  }, [hubID]);
-
-  useEffect(() => {
-    (async () => {
-      const hubs = await fetch.project.hubs.get();
-      setHubs(hubs);
-    })();
-  }, []);
-
   const itemID = useMemo(() => items.find((item) => api.utils.getURN(item) === urn)?.id, [items, urn]);
 
   return (
-    <Viewer data={metadatum} apiURL={apiURL} docURL={docURL}>
+    <Viewer data={metadata} apiURL={apiURL} docURL={docURL}>
       <HubSelector hubs={hubs?.data} hubID={hubID} onChangeHubID={onChangeHubID} />
       <ProjectSelector projects={projects?.data} projectID={projectID} onChangeProjectID={onChangeProjectID} />
       <FolderSelector projectID={projectID} contentTree={contentTree} onChangeFolderID={onChangeFolderID} setContentTree={setContentTree} />

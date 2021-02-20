@@ -1,10 +1,10 @@
 import queryString from "query-string";
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useParams, useHistory, useLocation } from "react-router-dom";
 import { NodeElement } from "../../types";
 import { Viewer } from "../../viewer";
 import * as api from "api";
-import * as fetch from "client/fetch";
+import { useHubs, useProjects, useIssues } from "client/root/helpers";
 import { HubSelector, ProjectSelector } from "client/root/selectors";
 import { PathParam, urls } from "lib";
 
@@ -27,9 +27,9 @@ export const ViwerComponent: React.FC = () => {
   const history = useHistory();
   const issueContainerID = !params.issueContainerID || params.issueContainerID !== ":issueContainerID" ? params.issueContainerID : undefined;
 
-  const [hubs, setHubs] = useState<api.project.hubs.get.Response | undefined>(undefined);
-  const [projects, setProjects] = useState<api.project.hub.projects.get.Response | undefined>(undefined);
-  const [issues, setIssues] = useState<api.issues.container.qualityIssues.get.Response | undefined>(undefined);
+  const [hubs] = useHubs();
+  const [projects] = useProjects({ hubID });
+  const [issues] = useIssues({ issueContainerID });
 
   const projectID = projects?.data.find((p) => api.utils.getIssueContainerID(p) === issueContainerID)?.id;
 
@@ -49,29 +49,6 @@ export const ViwerComponent: React.FC = () => {
     },
     [history, hubID, projects],
   );
-
-  useEffect(() => {
-    (async () => {
-      if (!issueContainerID) return;
-      const issues = await fetch.issues.container.qualityIssues.get({ issueContainerID });
-      setIssues(issues);
-    })();
-  }, [issueContainerID]);
-
-  useEffect(() => {
-    (async () => {
-      if (!hubID) return;
-      const projects = await fetch.project.hub.projects.get({ hubID });
-      setProjects(projects);
-    })();
-  }, [hubID]);
-
-  useEffect(() => {
-    (async () => {
-      const hubs = await fetch.project.hubs.get();
-      setHubs(hubs);
-    })();
-  }, []);
 
   return (
     <Viewer data={issues} apiURL={apiURL} docURL={docURL}>
