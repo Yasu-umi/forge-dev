@@ -1,4 +1,3 @@
-import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { NodeElement } from "../../types";

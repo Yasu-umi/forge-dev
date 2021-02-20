@@ -1,4 +1,3 @@
-import Typography from "@material-ui/core/Typography";
 import queryString from "query-string";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useParams, useHistory, useLocation } from "react-router-dom";
@@ -6,7 +5,7 @@ import { NodeElement } from "../../types";
 import { Viewer } from "../../viewer";
 import * as api from "api";
 import * as fetch from "client/fetch";
-import { HubSelector, AttributesNameSelector } from "client/root/selectors";
+import { HubSelector, ProjectSelector } from "client/root/selectors";
 import { PathParam, urls } from "lib";
 
 export const apiURL = urls.api.issues.container.qualityIssues.get({ issueContainerID: ":issueContainerID" });
@@ -77,10 +76,7 @@ export const ViwerComponent: React.FC = () => {
   return (
     <Viewer data={issues} apiURL={apiURL} docURL={docURL}>
       <HubSelector hubs={hubs?.data} hubID={hubID} onChangeHubID={onChangeHubID} />
-      <div>
-        <Typography>Project</Typography>
-        <AttributesNameSelector objectID={projectID} onChangeObjectID={onChangeProjectID} objects={projects?.data} />
-      </div>
+      <ProjectSelector projects={projects?.data} projectID={projectID} onChangeProjectID={onChangeProjectID} />
     </Viewer>
   );
 };

@@ -1,17 +1,22 @@
-import React, { useCallback } from "react";
-import { Item } from "../../../api/types";
-import { Selector } from "./selector";
+import Typography from "@material-ui/core/Typography";
+import React from "react";
+import { AttributesDisplayNameSelector } from "./attributes-display-name-selector";
+import { Item } from "api/types";
 
 export const ItemSelector = ({
   items,
   itemID,
   onChangeItemID,
 }: {
-  items: Item[];
+  items: Item[] | undefined;
   itemID: string | undefined;
   onChangeItemID: (id: string) => void;
 }) => {
-  const getID = useCallback((item: Item) => item.id, []);
-  const getName = useCallback((item: Item) => item.attributes.displayName, []);
-  return <Selector objects={items} objectID={itemID} onChangeObjectID={onChangeItemID} getID={getID} getName={getName} />;
+  if (!items || items.length === 0 || !itemID) return null;
+  return (
+    <div>
+      <Typography>Item</Typography>
+      <AttributesDisplayNameSelector objects={items} objectID={itemID} onChangeObjectID={onChangeItemID} />
+    </div>
+  );
 };

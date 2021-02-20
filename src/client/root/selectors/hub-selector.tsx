@@ -16,7 +16,7 @@ export const HubSelector = ({
   return (
     <div>
       <Typography>Hub</Typography>
-      <AttributesNameSelector objectID={hubID} onChangeObjectID={onChangeHubID} objects={hubs} />
+      <AttributesNameSelector objects={hubs} objectID={hubID} onChangeObjectID={onChangeHubID} />
     </div>
   );
 };

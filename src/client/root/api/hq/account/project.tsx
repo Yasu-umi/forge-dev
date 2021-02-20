@@ -1,11 +1,10 @@
-import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { NodeElement } from "../../types";
 import { Viewer } from "../../viewer";
 import * as api from "api";
 import * as fetch from "client/fetch";
-import { HubSelector, NameSelector } from "client/root/selectors";
+import { HubSelector, HQProjectSelector } from "client/root/selectors";
 import { urls } from "lib";
 
 export const apiURL = urls.api.hq.account.project.get({ accountID: ":accountID", projectID: ":projectID " });
@@ -64,10 +63,7 @@ export const ViwerComponent: React.FC = () => {
   return (
     <Viewer data={project} apiURL={apiURL} docURL={docURL}>
       <HubSelector hubs={hubs?.data} hubID={accountID ? api.hq.utils.getHubID(accountID) : undefined} onChangeHubID={onChangeHubID} />
-      <div>
-        <Typography>Project</Typography>
-        <NameSelector objectID={projectID} onChangeObjectID={onChangeProjectID} objects={projects} />
-      </div>
+      <HQProjectSelector projects={projects} projectID={projectID} onChangeProjectID={onChangeProjectID} />
     </Viewer>
   );
 };
