@@ -9,7 +9,7 @@ import { HubSelector, findItems, ProjectSelector, FolderSelector, ItemSelector }
 import { urls, PathParam } from "lib";
 
 export const apiURL = urls.api.modelderivative.designdata.metadata.get({ urn: ":urn" });
-export const docURL = "https://forge.autodesk.com/en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-contents-GET/";
+export const docURL = "https://forge.autodesk.com/en/docs/model-derivative/v2/reference/http/urn-metadata-GET/";
 export const path = urls.views.api.modelderivative.designdata.metadata.get({ urn: ":urn" });
 
 const buildURL = ({ urn, hubID, projectID, folderID }: { urn: PathParam; hubID: PathParam; projectID: PathParam; folderID: PathParam }) =>
