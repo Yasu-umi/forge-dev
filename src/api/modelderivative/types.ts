@@ -6,6 +6,6 @@ export type Metadata = {
 
 export type ObjectType = {
   objectid: number;
-  name: string;
+  name?: string;
   objects?: ObjectType[];
 };
