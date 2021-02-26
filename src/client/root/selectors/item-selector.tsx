@@ -12,7 +12,6 @@ export const ItemSelector = ({
   itemID: string | undefined;
   onChangeItemID: (id: string) => void;
 }) => {
-  if (!items || items.length === 0) return null;
   return (
     <div>
       <Typography>Item</Typography>

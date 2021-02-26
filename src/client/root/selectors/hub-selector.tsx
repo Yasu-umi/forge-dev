@@ -12,7 +12,6 @@ export const HubSelector = ({
   hubID: string | undefined;
   onChangeHubID: (id: string) => void;
 }) => {
-  if (!hubs || hubs.length === 0) return null;
   return (
     <div>
       <Typography>Hub</Typography>

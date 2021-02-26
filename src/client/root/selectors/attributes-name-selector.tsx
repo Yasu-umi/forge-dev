@@ -14,6 +14,5 @@ export const AttributesNameSelector = ({
 }) => {
   const getID = useCallback((object: AttributesName) => object.id, []);
   const getName = useCallback((object: AttributesName) => object.attributes.name, []);
-  if (!objects) return null;
-  return <Selector objects={objects} objectID={objectID} onChangeObjectID={onChangeObjectID} getID={getID} getName={getName} />;
+  return <Selector objects={objects || []} objectID={objectID} onChangeObjectID={onChangeObjectID} getID={getID} getName={getName} />;
 };

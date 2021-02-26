@@ -12,7 +12,6 @@ export const HQProjectSelector = ({
   projectID: string | undefined;
   onChangeProjectID: (id: string) => void;
 }) => {
-  if (!projects || projects.length === 0) return null;
   return (
     <div>
       <Typography>Hub</Typography>
