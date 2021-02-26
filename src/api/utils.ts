@@ -1,5 +1,14 @@
 import * as types from "./types";
 
+export const parseContentIncluded = (contentIncluded: types.ContentIncluded): types.ContentIncluded => ({
+  ...contentIncluded,
+  attributes: {
+    ...contentIncluded.attributes,
+    createTime: new Date(contentIncluded.attributes.createTime),
+    lastModifiedTime: new Date(contentIncluded.attributes.lastModifiedTime),
+  },
+});
+
 export const parseFolder = (folder: types.Folder): types.Folder => ({
   ...folder,
   attributes: {

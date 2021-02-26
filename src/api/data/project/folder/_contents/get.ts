@@ -39,6 +39,9 @@ export const fetch = async (accessToken: string, { projectID, folderID }: { proj
   });
   const body: Response = await res.json();
   body.data = body.data.map((d) => utils.parseContent(d));
+  if (body.included) {
+    body.included = body.included.map((contentIncluded) => utils.parseContentIncluded(contentIncluded));
+  }
   try {
     assertType<Response>(body);
   } catch (e) {
