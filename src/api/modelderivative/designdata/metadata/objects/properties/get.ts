@@ -1,13 +1,13 @@
 import fetchPonyfill from "fetch-ponyfill";
 import { assertType } from "typescript-is";
-import { base64Encode } from "../../../../utils";
-import * as types from "../../../types";
+import { base64Encode } from "../../../../../utils";
+import * as types from "../../../../types";
 
 export type Response =
   | {
       data: {
-        type: "objects";
-        objects: types.ObjectType[];
+        type: "properties";
+        collection: types.Property[];
       };
     }
   | {
@@ -16,7 +16,7 @@ export type Response =
   | { diagnostic: string };
 
 export const url = ({ urn, guid }: { urn: string; guid: string }) =>
-  `https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn}/metadata/${guid}`;
+  `https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn}/metadata/${guid}/properties`;
 
 export const fetch = async (accessToken: string, { urn, guid }: { urn: string; guid: string }): Promise<Response> => {
   const { fetch } = fetchPonyfill();

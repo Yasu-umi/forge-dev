@@ -1,19 +1,17 @@
 import queryString from "query-string";
 import React, { useMemo, useCallback } from "react";
 import { useHistory } from "react-router-dom";
-import { NodeElement } from "../../../types";
-import { Viewer } from "../../../viewer";
+import { NodeElement } from "../../../../types";
+import { Viewer } from "../../../../viewer";
 import * as api from "api";
 import * as fetch from "client/fetch";
 import * as helpers from "client/root/helpers";
 import { HubSelector, findItems, ObjectSelector, ProjectSelector, FolderSelector, ItemSelector } from "client/root/selectors";
 import { urls, PathParam } from "lib";
 
-export * from "./_objects";
-
-export const apiURL = urls.api.modelderivative.designdata.metadata.objects.get({ urn: ":urn", guid: ":guid" });
-export const docURL = "https://forge.autodesk.com/en/docs/model-derivative/v2/reference/http/urn-metadata-guid-GET/";
-export const path = urls.views.api.modelderivative.designdata.metadata.objects.get({ urn: ":urn", guid: ":guid" });
+export const apiURL = urls.api.modelderivative.designdata.metadata.objects.properties.get({ urn: ":urn", guid: ":guid" });
+export const docURL = "https://forge.autodesk.com/en/docs/model-derivative/v2/reference/http/urn-metadata-guid-properties-GET/";
+export const path = urls.views.api.modelderivative.designdata.metadata.objects.properties.get({ urn: ":urn", guid: ":guid" });
 
 const buildURL = ({
   urn,
@@ -28,7 +26,7 @@ const buildURL = ({
   projectID: PathParam;
   folderID: PathParam;
 }) =>
-  `${urls.views.api.modelderivative.designdata.metadata.objects.get({
+  `${urls.views.api.modelderivative.designdata.metadata.objects.properties.get({
     urn: typeof urn === "string" ? api.utils.base64Encode(urn) : ":urn",
     guid: typeof guid === "string" ? guid : ":guid",
   })}?${queryString.stringify({
@@ -50,7 +48,7 @@ export const ViwerComponent: React.FC = () => {
   const [projects] = helpers.useProjects({ hubID });
   const [contentTree, setContentTree] = helpers.useContentTree({ hubID, projectID });
   const [metadata] = helpers.useMetadata({ urn });
-  const [objects, setObjects] = helpers.useObjects({ urn, guid });
+  const [properties, setProperties] = helpers.useProperties({ urn, guid });
 
   const items = useMemo(() => findItems(contentTree), [contentTree]);
 
@@ -88,23 +86,23 @@ export const ViwerComponent: React.FC = () => {
     [history, hubID, projectID, folderID, urn],
   );
 
-  const onClickReloadObjects = useCallback(() => {
+  const onClickReloadProperties = useCallback(() => {
     (async () => {
       if (!urn || !guid) return;
-      const objects = await fetch.modelderivative.designdata.metadata.objects.get({ urn, guid });
-      setObjects(objects);
+      const projects = await fetch.modelderivative.designdata.metadata.objects.properties.get({ urn, guid });
+      setProperties(projects);
     })();
-  }, [guid, urn, setObjects]);
+  }, [guid, urn, setProperties]);
 
   const itemID = useMemo(() => items.find((item) => api.utils.getURN(item) === urn)?.id, [items, urn]);
 
   return (
-    <Viewer data={objects} apiURL={apiURL} docURL={docURL}>
+    <Viewer data={properties} apiURL={apiURL} docURL={docURL}>
       <HubSelector hubs={hubs?.data} hubID={hubID} onChangeHubID={onChangeHubID} />
       <ProjectSelector projects={projects?.data} projectID={projectID} onChangeProjectID={onChangeProjectID} />
       <FolderSelector projectID={projectID} contentTree={contentTree} onChangeFolderID={onChangeFolderID} setContentTree={setContentTree} />
       <ItemSelector items={items} itemID={itemID} onChangeItemID={onChangeItemID} />
-      <ObjectSelector metadatum={metadata?.data.metadata} guid={guid} onChangeGUID={onChangeGUID} onClickReload={onClickReloadObjects} />
+      <ObjectSelector metadatum={metadata?.data.metadata} guid={guid} onChangeGUID={onChangeGUID} onClickReload={onClickReloadProperties} />
     </Viewer>
   );
 };

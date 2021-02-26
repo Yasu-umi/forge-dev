@@ -344,5 +344,20 @@ export const buildAPIRouter = (accessTokenPool: AccessTokenPool, env: { clientID
     ),
   );
 
+  router.get(
+    urls.api.modelderivative.designdata.metadata.objects.properties.get({ urn: ":urn", guid: ":guid" }),
+    tryWrapper(
+      urnParser(
+        guidParser(
+          fetch3LegAccessToken(
+            APIHandlerBuilder<hasAccessToken & hasURN & hasGUID, api.modelderivative.designdata.metadata.objects.properties.get.Response>(
+              api.modelderivative.designdata.metadata.objects.properties.get.fetch,
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
   return router;
 };
