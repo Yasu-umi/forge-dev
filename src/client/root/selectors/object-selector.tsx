@@ -5,7 +5,7 @@ import React, { useCallback } from "react";
 import { Selector } from "./selector";
 import { Metadata } from "api/modelderivative/types";
 
-export const MetadataSelector = ({
+export const ObjectSelector = ({
   metadatum,
   guid,
   onChangeGUID,
@@ -21,7 +21,7 @@ export const MetadataSelector = ({
   return (
     <div style={{ display: "flex" }}>
       <div>
-        <Typography>Metadata</Typography>
+        <Typography>Object</Typography>
         <Selector objects={metadatum || []} objectID={guid} onChangeObjectID={onChangeGUID} getID={getID} getName={getName} />;
       </div>
       {onClickReload ? (

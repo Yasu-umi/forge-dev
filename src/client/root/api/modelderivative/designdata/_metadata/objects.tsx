@@ -6,7 +6,7 @@ import { Viewer } from "../../../viewer";
 import * as api from "api";
 import * as fetch from "client/fetch";
 import * as helpers from "client/root/helpers";
-import { HubSelector, findItems, MetadataSelector, ProjectSelector, FolderSelector, ItemSelector } from "client/root/selectors";
+import { HubSelector, findItems, ObjectSelector, ProjectSelector, FolderSelector, ItemSelector } from "client/root/selectors";
 import { urls, PathParam } from "lib";
 
 export const apiURL = urls.api.modelderivative.designdata.metadata.objects.get({ urn: ":urn", guid: ":guid" });
@@ -86,7 +86,7 @@ export const ViwerComponent: React.FC = () => {
     [history, hubID, projectID, folderID, urn],
   );
 
-  const onClickReload = useCallback(() => {
+  const onClickReloadObjects = useCallback(() => {
     (async () => {
       if (!urn || !guid) return;
       const objects = await fetch.modelderivative.designdata.metadata.objects.get({ urn, guid });
@@ -102,7 +102,7 @@ export const ViwerComponent: React.FC = () => {
       <ProjectSelector projects={projects?.data} projectID={projectID} onChangeProjectID={onChangeProjectID} />
       <FolderSelector projectID={projectID} contentTree={contentTree} onChangeFolderID={onChangeFolderID} setContentTree={setContentTree} />
       <ItemSelector items={items} itemID={itemID} onChangeItemID={onChangeItemID} />
-      <MetadataSelector metadatum={metadata?.data.metadata} guid={guid} onChangeGUID={onChangeGUID} onClickReload={onClickReload} />
+      <ObjectSelector metadatum={metadata?.data.metadata} guid={guid} onChangeGUID={onChangeGUID} onClickReload={onClickReloadObjects} />
     </Viewer>
   );
 };
