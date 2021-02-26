@@ -84,12 +84,12 @@ export const tree: Node = {
 const renderTree = (node: Node): JSX.Element[] =>
   Object.values(node)
     .map((value) => [
+      ...("children" in value && value.children ? renderTree(value.children) : []),
       "path" in value ? (
         <Route path={value.path} key={value.path}>
           <value.Viewer />
         </Route>
       ) : null,
-      ...("children" in value && value.children ? renderTree(value.children) : []),
     ])
     .reduce((prev, cur) => [...prev, ...cur], [])
     .filter((el): el is JSX.Element => !!el);
