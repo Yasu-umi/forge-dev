@@ -13,7 +13,7 @@ resource "aws_lambda_function" "main" {
 
   environment {
     variables = {
-      HOST                       = aws_apigatewayv2_stage.main.invoke_url
+      HOST                       = "https://${var.app}.${var.domain}"
       CLIENT_ID_SSM_NAME         = aws_ssm_parameter.client_id.name
       CLIENT_SECRET_SSM_NAME     = aws_ssm_parameter.client_secret.name
       BIM360_ACCOUNT_ID_SSM_NAME = aws_ssm_parameter.bim360_account_id.name
