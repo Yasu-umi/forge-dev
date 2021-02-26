@@ -86,8 +86,6 @@ export const ViwerComponent: React.FC = () => {
   );
 
   const itemID = useMemo(() => items.find((item) => api.utils.getURN(item) === urn)?.id, [items, urn]);
-  console.log(metadata);
-  console.log(objects);
 
   return (
     <Viewer data={objects} apiURL={apiURL} docURL={docURL}>

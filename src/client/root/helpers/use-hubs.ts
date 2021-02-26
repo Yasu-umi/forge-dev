@@ -7,7 +7,6 @@ export const useHubs = () => {
   useEffect(() => {
     (async () => {
       const hubs = await fetch.project.hubs.get();
-      console.log(hubs);
       setHubs(hubs);
     })();
   }, []);
