@@ -3,14 +3,16 @@ import { assertType } from "typescript-is";
 import { base64Encode } from "../../../../utils";
 import * as types from "../../../types";
 
-export type Response = {
-  data: {
-    type: "objects";
-    objects: types.ObjectType[];
-  };
-} & {
-  result: "success";
-};
+export type Response =
+  | {
+      data: {
+        type: "objects";
+        objects: types.ObjectType[];
+      };
+    }
+  | {
+      result: "success";
+    };
 
 export const url = ({ urn, guid }: { urn: string; guid: string }) =>
   `https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn}/metadata/${guid}`;
