@@ -21,7 +21,7 @@ export const MetadataSelector = ({
   return (
     <div style={{ display: "flex" }}>
       <div>
-        <Typography>Netadata</Typography>
+        <Typography>Metadata</Typography>
         <Selector objects={metadatum || []} objectID={guid} onChangeObjectID={onChangeGUID} getID={getID} getName={getName} />;
       </div>
       {onClickReload ? (
