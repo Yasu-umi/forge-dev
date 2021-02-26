@@ -15,7 +15,7 @@ export const ProjectSelector = ({
   if (!projects || projects.length === 0) return null;
   return (
     <div>
-      <Typography>Hub</Typography>
+      <Typography>Project</Typography>
       <AttributesNameSelector objects={projects} objectID={projectID} onChangeObjectID={onChangeProjectID} />
     </div>
   );
