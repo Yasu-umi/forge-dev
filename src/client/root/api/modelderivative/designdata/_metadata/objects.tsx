@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import { NodeElement } from "../../../types";
 import { Viewer } from "../../../viewer";
 import * as api from "api";
+import * as fetch from "client/fetch";
 import * as helpers from "client/root/helpers";
 import { HubSelector, findItems, MetadataSelector, ProjectSelector, FolderSelector, ItemSelector } from "client/root/selectors";
 import { urls, PathParam } from "lib";
@@ -47,7 +48,7 @@ export const ViwerComponent: React.FC = () => {
   const [projects] = helpers.useProjects({ hubID });
   const [contentTree, setContentTree] = helpers.useContentTree({ hubID, projectID });
   const [metadata] = helpers.useMetadata({ urn });
-  const [objects] = helpers.useObjects({ urn, guid });
+  const [objects, setObjects] = helpers.useObjects({ urn, guid });
 
   const items = useMemo(() => findItems(contentTree), [contentTree]);
 
@@ -85,6 +86,14 @@ export const ViwerComponent: React.FC = () => {
     [history, hubID, projectID, folderID, urn],
   );
 
+  const onClickReload = useCallback(() => {
+    (async () => {
+      if (!urn || !guid) return;
+      const objects = await fetch.modelderivative.designdata.metadata.objects.get({ urn, guid });
+      setObjects(objects);
+    })();
+  }, [guid, urn, setObjects]);
+
   const itemID = useMemo(() => items.find((item) => api.utils.getURN(item) === urn)?.id, [items, urn]);
 
   return (
@@ -93,7 +102,7 @@ export const ViwerComponent: React.FC = () => {
       <ProjectSelector projects={projects?.data} projectID={projectID} onChangeProjectID={onChangeProjectID} />
       <FolderSelector projectID={projectID} contentTree={contentTree} onChangeFolderID={onChangeFolderID} setContentTree={setContentTree} />
       <ItemSelector items={items} itemID={itemID} onChangeItemID={onChangeItemID} />
-      <MetadataSelector metadatum={metadata?.data.metadata} guid={guid} onChangeGUID={onChangeGUID} />
+      <MetadataSelector metadatum={metadata?.data.metadata} guid={guid} onChangeGUID={onChangeGUID} onClickReload={onClickReload} />
     </Viewer>
   );
 };
