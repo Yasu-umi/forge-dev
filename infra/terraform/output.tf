@@ -1,3 +1,3 @@
 output "api_url" {
-  value = aws_apigatewayv2_stage.main.invoke_url
+  value = "https://${var.app}.${var.domain}"
 }
