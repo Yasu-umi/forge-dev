@@ -9,7 +9,7 @@ export type Response = {
   };
   links: {
     self: {
-      href: "/project/v1/hubs/a.hub.id.123/projects/a.project.id.xyz/topFolders";
+      href: string;
     };
   };
   data: types.Folder[];
