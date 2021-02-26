@@ -42,3 +42,9 @@ export const useURN = () => {
   const urn = typeof params.urn === "string" && params.urn !== ":urn" ? api.utils.base64Decode(params.urn) : undefined;
   return urn;
 };
+
+export const useGUID = () => {
+  const params = useParams<{ guid?: string }>();
+  const guid = typeof params.guid === "string" && params.guid !== ":guid" ? params.guid : undefined;
+  return guid;
+};

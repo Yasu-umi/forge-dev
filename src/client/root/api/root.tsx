@@ -74,7 +74,12 @@ export const tree: Node = {
     children: {
       designdata: {
         children: {
-          metadata: modelderivative.designdata.metadata.nodeElement,
+          metadata: {
+            ...modelderivative.designdata.metadata.nodeElement,
+            children: {
+              objects: modelderivative.designdata.metadata.objects.nodeElement,
+            },
+          },
         },
       },
     },

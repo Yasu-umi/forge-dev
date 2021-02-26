@@ -11,5 +11,5 @@ export const useMetadata = ({ urn }: { urn: string | undefined }) => {
       setMetadata(metadata);
     })();
   }, [urn]);
-  return [metadata, setMetadata];
+  return [metadata, setMetadata] as const;
 };

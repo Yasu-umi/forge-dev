@@ -124,6 +124,18 @@ const urnParser = <T>(handler: (req: Request, res: Response, next: NextFunction,
   return await handler(req, res, next, { ...params, urn });
 };
 
+type hasGUID = { guid: string };
+const guidParser = <T>(handler: (req: Request, res: Response, next: NextFunction, params: T & hasGUID) => Promise<void>) => async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  params: T,
+) => {
+  const guid = req.params["guid"];
+  if (!guid) throw new Error("NotFoundGUID");
+  return await handler(req, res, next, { ...params, guid });
+};
+
 const APIHandlerBuilder = <T extends { accessToken: { access_token: string } }, S>(
   fetcher: (access_token: string, params: T) => Promise<S>,
 ) => async (_req: Request, res: Response, _next: NextFunction, params: T) => {
@@ -311,6 +323,21 @@ export const buildAPIRouter = (accessTokenPool: AccessTokenPool, env: { clientID
         fetch3LegAccessToken(
           APIHandlerBuilder<hasAccessToken & hasURN, api.modelderivative.designdata.metadata.get.Response>(
             api.modelderivative.designdata.metadata.get.fetch,
+          ),
+        ),
+      ),
+    ),
+  );
+
+  router.get(
+    urls.api.modelderivative.designdata.metadata.objects.get({ urn: ":urn", guid: ":guid" }),
+    tryWrapper(
+      urnParser(
+        guidParser(
+          fetch3LegAccessToken(
+            APIHandlerBuilder<hasAccessToken & hasURN & hasGUID, api.modelderivative.designdata.metadata.objects.get.Response>(
+              api.modelderivative.designdata.metadata.objects.get.fetch,
+            ),
           ),
         ),
       ),

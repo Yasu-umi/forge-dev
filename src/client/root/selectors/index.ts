@@ -5,6 +5,7 @@ export * from "./folder-selector";
 export * from "./hq-project-selector";
 export * from "./hub-selector";
 export * from "./item-selector";
+export * from "./metadata-selector";
 export * from "./name-selector";
 export * from "./project-selector";
 export * from "./selector";

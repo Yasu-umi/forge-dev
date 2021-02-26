@@ -78,6 +78,9 @@ export const urls = {
         designdata: {
           metadata: {
             get: ({ urn }: { urn: PathParam }) => `/views/api/modelderivative/designdata/${urn || ":urn"}/metadata`,
+            objects: {
+              get: ({ urn, guid }: { urn: string; guid: string }) => `/views/api/modelderivative/designdata/${urn}/metadata/${guid}`,
+            },
           },
         },
       },
@@ -154,6 +157,9 @@ export const urls = {
       designdata: {
         metadata: {
           get: ({ urn }: { urn: string }) => `/api/modelderivative/designdata/${urn}/metadata`,
+          objects: {
+            get: ({ urn, guid }: { urn: string; guid: string }) => `/api/modelderivative/designdata/${urn}/metadata/${guid}`,
+          },
         },
       },
     },
