@@ -5,3 +5,7 @@ variable "app" {
 variable "codestar_connection_arn" {
   type = string
 }
+
+variable "domain" {
+  type = string
+}

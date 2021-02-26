@@ -75,3 +75,19 @@ resource "aws_lambda_permission" "main" {
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_stage.main.execution_arn}/*"
 }
+
+resource "aws_apigatewayv2_domain_name" "main" {
+  domain_name = "${var.app}.${var.domain}"
+
+  domain_name_configuration {
+    certificate_arn = data.aws_acm_certificate.main.arn
+    endpoint_type   = "REGIONAL"
+    security_policy = "TLS_1_2"
+  }
+}
+
+resource "aws_apigatewayv2_api_mapping" "main" {
+  api_id      = aws_apigatewayv2_api.main.id
+  domain_name = aws_apigatewayv2_domain_name.main.id
+  stage       = "$default"
+}
