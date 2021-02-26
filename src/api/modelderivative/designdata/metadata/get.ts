@@ -22,7 +22,6 @@ export const fetch = async (accessToken: string, { urn }: { urn: string }): Prom
     },
   });
   const body: Response = await res.json();
-  body.data.metadata = body.data.metadata;
   try {
     assertType<Response>(body);
   } catch (e) {
