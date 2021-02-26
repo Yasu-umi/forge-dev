@@ -11,5 +11,5 @@ export const useObjects = ({ urn, guid }: { urn: string | undefined; guid: strin
       setObjects(objects);
     })();
   }, [urn, guid]);
-  return [objects, setObjects];
+  return [objects, setObjects] as const;
 };

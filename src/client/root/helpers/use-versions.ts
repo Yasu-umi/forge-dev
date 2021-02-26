@@ -11,5 +11,5 @@ export const useVersions = ({ projectID, itemID }: { projectID: string | undefin
       setVersions(versions);
     })();
   }, [projectID, itemID]);
-  return [versions, setVersions];
+  return [versions, setVersions] as const;
 };
