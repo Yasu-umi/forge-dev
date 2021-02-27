@@ -1,5 +1,6 @@
 import { IncomingMessage } from "http";
 import { DynamoDB } from "aws-sdk";
+import compression from "compression";
 import DynamoDBStore from "connect-dynamodb";
 import cookieParser from "cookie-parser";
 import express from "express";
@@ -13,6 +14,8 @@ import { urls } from "lib";
 
 export const buildApp = (app: express.Express, env: env) => {
   const accessTokenPool = buildAccessTokenPool(env);
+
+  app.use(compression());
 
   app.use(
     morgan("short", {
