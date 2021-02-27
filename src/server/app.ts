@@ -1,4 +1,6 @@
 import { IncomingMessage } from "http";
+import { DynamoDB } from "aws-sdk";
+import DynamoDBStore from "connect-dynamodb";
 import cookieParser from "cookie-parser";
 import express from "express";
 import session from "express-session";
@@ -19,18 +21,38 @@ export const buildApp = (app: express.Express, env: env) => {
   );
   app.use(cookieParser());
 
-  app.use(
-    session({
-      secret: "forge-dev",
-      cookie: {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 1000 * 60 * 60, // 1 hour to expire the session
-      },
-      resave: false,
-      saveUninitialized: true,
-    }),
-  );
+  if (env.sessionDynamoTableName) {
+    const Store = DynamoDBStore({ session });
+    app.use(
+      session({
+        secret: "forge-dev",
+        store: new Store({
+          table: env.sessionDynamoTableName,
+          client: new DynamoDB({ region: "ap-northeast-1" }),
+        }),
+        cookie: {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          maxAge: 1000 * 60 * 60, // 1 hour to expire the session
+        },
+        resave: false,
+        saveUninitialized: true,
+      }),
+    );
+  } else {
+    app.use(
+      session({
+        secret: "forge-dev",
+        cookie: {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          maxAge: 1000 * 60 * 60, // 1 hour to expire the session
+        },
+        resave: false,
+        saveUninitialized: true,
+      }),
+    );
+  }
 
   app.use("/healthcheck", (_req, res) => res.sendStatus(200));
 

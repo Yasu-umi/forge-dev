@@ -18,6 +18,7 @@ resource "aws_lambda_function" "main" {
       CLIENT_SECRET_SSM_NAME     = aws_ssm_parameter.client_secret.name
       BIM360_ACCOUNT_ID_SSM_NAME = aws_ssm_parameter.bim360_account_id.name
       DYNAMO_TABLE_NAME          = aws_dynamodb_table.main.name
+      SESSION_DYNAMO_TABLE_NAME  = aws_dynamodb_table.session.name
       NODE_ENV                   = "production"
     }
   }
@@ -66,6 +67,15 @@ data "aws_iam_policy_document" "lambda_main" {
       "dynamodb:PutItem",
     ]
     resources = [aws_dynamodb_table.main.arn]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "dynamodb:GetItem",
+      "dynamodb:PutItem",
+    ]
+    resources = [aws_dynamodb_table.session.arn]
   }
 
   statement {

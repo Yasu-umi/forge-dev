@@ -38,19 +38,35 @@ const getDynamoTableName = async () => {
   return typeof process.env["DYNAMO_TABLE_NAME"] === "string" ? process.env["DYNAMO_TABLE_NAME"] : undefined;
 };
 
+const getSessionDynamoTableName = async () => {
+  return typeof process.env["SESSION_DYNAMO_TABLE_NAME"] === "string" ? process.env["SESSION_DYNAMO_TABLE_NAME"] : undefined;
+};
+
 const getHost = async () => {
   if (!process.env["HOST"]) throw new Error("NotFoundHost");
   return process.env["HOST"].replace(/\/$/, "");
 };
 
-export type env = Readonly<{ clientID: string; clientSecret: string; dynamoTableName: string | undefined; host: string }>;
+export type env = Readonly<{
+  clientID: string;
+  clientSecret: string;
+  dynamoTableName: string | undefined;
+  sessionDynamoTableName: string | undefined;
+  host: string;
+}>;
 
 export const getEnv = async () => {
   let env: env | undefined;
   return await (async () => {
     if (!env) {
-      const [clientID, clientSecret, dynamoTableName, host] = await Promise.all([getClientID(), getClientSecret(), getDynamoTableName(), getHost()]);
-      env = { clientID, clientSecret, dynamoTableName, host };
+      const [clientID, clientSecret, dynamoTableName, sessionDynamoTableName, host] = await Promise.all([
+        getClientID(),
+        getClientSecret(),
+        getDynamoTableName(),
+        getSessionDynamoTableName(),
+        getHost(),
+      ]);
+      env = { clientID, clientSecret, dynamoTableName, sessionDynamoTableName, host };
     }
     return env;
   })();

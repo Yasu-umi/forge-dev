@@ -61,6 +61,7 @@ resource "aws_apigatewayv2_integration" "main" {
   integration_method   = "POST"
   integration_uri      = aws_lambda_function.main.invoke_arn
   passthrough_behavior = "WHEN_NO_MATCH"
+  timeout_milliseconds = 30000
 }
 
 resource "aws_apigatewayv2_route" "main" {
