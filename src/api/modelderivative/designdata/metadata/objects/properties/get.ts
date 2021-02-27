@@ -25,6 +25,7 @@ export const fetch = async (accessToken: string, { urn, guid }: { urn: string; g
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/vnd.api+json",
+      "Accept-Encoding": "*",
     },
   });
   const body: Response = await res.json();

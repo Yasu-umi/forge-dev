@@ -19,6 +19,7 @@ export const fetch = async (accessToken: string, { urn }: { urn: string }): Prom
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/vnd.api+json",
+      "Accept-Encoding": "*",
     },
   });
   const body: Response = await res.json();
