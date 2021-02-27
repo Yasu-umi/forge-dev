@@ -23,7 +23,7 @@ resource "aws_lambda_function" "main" {
     }
   }
 
-  memory_size = 128
+  memory_size = 256
   timeout     = 60
 
   depends_on = [aws_cloudwatch_log_group.lambda]
