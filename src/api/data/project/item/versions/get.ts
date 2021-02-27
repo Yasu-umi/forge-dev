@@ -33,7 +33,6 @@ export const fetch = async (accessToken: string, { projectID, itemID }: { projec
     method: "GET",
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/vnd.api+json",
     },
   });
   const body: Response = await res.json();

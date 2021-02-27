@@ -14,7 +14,6 @@ export const fetch = async (accessToken: string, { accountID, projectID }: { acc
     method: "GET",
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/vnd.api+json",
     },
   });
   const body: Response = await res.json();
